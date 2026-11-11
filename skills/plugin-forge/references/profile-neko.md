@@ -22,6 +22,10 @@ gh api repos/Project-N-E-K-O/N.E.K.O/contents/scripts/custom_channels/neko_chann
 > 沙箱契约另经 `neko-plugin-sandbox` 复核（commit `645da54`，2026-11-07）。
 > 每条能力面结论带 `文件:行`。上游若升版，先复核再改。
 
+## 0. 扩展阅读
+
+本 profile 之外还有 23 份 NEKO 调研笔记在 `references/neko/`（ops 17 + court 6，2026-11-11 并入）。冲突时以本 profile 为准；`neko-court-*` 与 `capability-baseline.md` 是历史快照。
+
 ## 1. 身份与安装形态
 - N.E.K.O. = 桌面猫娘 AI 宿主；插件 = **独立 Python 进程**（独立进程天然隔离崩溃）。
 - 消息平面走 **ZMQ RPC**，默认 `tcp://127.0.0.1:38865`，可用 `NEKO_MESSAGE_PLANE_ZMQ_RPC_ENDPOINT` 改写

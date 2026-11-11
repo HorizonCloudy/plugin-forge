@@ -4,40 +4,18 @@
     "name": "云朵",
     "url": "https://github.com/HorizonCloudy"
   },
-  "description": "插件制造专家团：plugin-forge 通用范式 + N.E.K.O 专属 ops / court 团队，可安装插件集。",
+  "description": "插件制造专家团：一个团队，一个插件。",
   "plugins": [
     {
       "name": "plugin-forge",
-      "source": "./plugin-forge",
-      "description": "平台无关的插件制造专家团范式（契约先行 + TDD + 安全门禁 + 影响审计 + 双风格文档门禁）。",
+      "source": "./",
+      "description": "平台无关插件制造专家团，内置 N.E.K.O 平台资产。",
       "category": "engineering",
       "keywords": [
         "plugins",
         "multi-agent",
         "contract-first",
         "anti-slop"
-      ]
-    },
-    {
-      "name": "neko-plugin-ops",
-      "source": "./neko-plugin-ops",
-      "description": "N.E.K.O 插件设计与自动运维专家团（12 角色 + 能力刷新 + 运行时沙箱）。",
-      "category": "engineering",
-      "keywords": [
-        "neko",
-        "plugins",
-        "ops"
-      ]
-    },
-    {
-      "name": "neko-plugin-court",
-      "source": "./neko-plugin-court",
-      "description": "N.E.K.O 插件朝议（中书/门下/尚书六部），带真实否决权与审计留痕的插件流水线。",
-      "category": "engineering",
-      "keywords": [
-        "neko",
-        "workflow",
-        "veto"
       ]
     }
   ]

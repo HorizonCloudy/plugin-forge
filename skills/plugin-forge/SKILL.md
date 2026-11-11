@@ -13,7 +13,7 @@ description: |
   平台知识按 profile 渐进加载（首例 profile：N.E.K.O）。
 metadata:
   author: "local"
-  version: "1.2.0"
+  version: "1.3.0"
   derived_from:
     - "neko-plugin-ops（NEKO 插件设计与自动运维专家团）"
     - "neko-plugin-court（NEKO 插件朝议；制度模型参考 cft0808/edict, MIT）"
@@ -85,6 +85,7 @@ metadata:
 | 完整团队宪法（11 条执行纪律） | `references/constitution.md` |
 | 工作流 A–H 阶段表 + 验收清单 | `references/workflows.md` |
 | 写作风格门禁（反 slop，中英） | `references/style-anti-slop.md` |
+| N.E.K.O 扩展调研笔记 | `references/neko/`（冲突时以 profile-neko 为准） |
 | 给新平台写 profile | `references/profile-template.md` |
 | N.E.K.O 平台契约 | `references/profile-neko.md` |
 | 各成员详细人设 | 已装 agents 目录下的 `plugin-forge-*.md` |
