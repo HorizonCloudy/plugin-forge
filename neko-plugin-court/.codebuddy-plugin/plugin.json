@@ -1,0 +1,231 @@
+{
+  "name": "neko-plugin-court",
+  "version": "1.0.1",
+  "description": "N.E.K.O plugin squad organised as the Edict court: intake, plan, SDK-contract veto review, dispatch, and six ministries building and shipping plugins with an audit trail.",
+  "author": {
+    "name": "云朵",
+    "email": "HorizonCloudy@users.noreply.github.com"
+  },
+  "agents": [
+    "./agents/neko-plugin-court-team-lead.md",
+    "./agents/neko-court-zhongshu.md",
+    "./agents/neko-court-menxia.md",
+    "./agents/neko-court-shangshu.md",
+    "./agents/neko-court-gongbu.md",
+    "./agents/neko-court-bingbu.md",
+    "./agents/neko-court-hubu.md",
+    "./agents/neko-court-libu.md",
+    "./agents/neko-court-xingbu.md",
+    "./agents/neko-court-libu-hr.md",
+    "./agents/neko-court-qintianjian.md"
+  ],
+  "expertType": "team",
+  "agentName": "neko-plugin-court-team-lead",
+  "teamInfo": {
+    "leadAgent": "neko-plugin-court-team-lead",
+    "memberAgents": [
+      "neko-court-zhongshu",
+      "neko-court-menxia",
+      "neko-court-shangshu",
+      "neko-court-gongbu",
+      "neko-court-bingbu",
+      "neko-court-hubu",
+      "neko-court-libu",
+      "neko-court-xingbu",
+      "neko-court-libu-hr",
+      "neko-court-qintianjian"
+    ]
+  },
+  "displayName": {
+    "en": "NEKO Plugin Court (Edict)",
+    "zh": "NEKO 插件朝议"
+  },
+  "profession": {
+    "en": "NEKO Plugin Court (Edict)",
+    "zh": "NEKO 插件朝议"
+  },
+  "displayDescription": {
+    "en": "Builds N.E.K.O plugins under the Edict system: intake, plan, SDK-contract veto, dispatch, six ministries implementing in parallel, every step auditable.",
+    "zh": "三省六部制开发 N.E.K.O 插件：分拣、规划、契约审议、派发、六部并行，全程留痕可审计。"
+  },
+  "avatar": "avatars/team.png",
+  "categoryId": "02-Engineering",
+  "defaultInitPrompt": {
+    "zh": "传旨：做一个 N.E.K.O 插件，从方案到契约审议到实现，走完整朝议",
+    "en": "Issue an edict: build a N.E.K.O plugin, run the full court from plan to SDK-contract review to implementation"
+  },
+  "plugin": "neko-plugin-court",
+  "tags": [
+    {
+      "en": "NEKO Plugin Dev",
+      "zh": "N.E.K.O 插件开发"
+    },
+    {
+      "en": "SDK Contract Review",
+      "zh": "SDK 契约审议"
+    },
+    {
+      "en": "Three Departments System",
+      "zh": "三省六部制"
+    }
+  ],
+  "quickPrompts": [
+    {
+      "zh": "传旨：做一个 N.E.K.O 插件，从方案到契约审议到实现，走完整朝议",
+      "en": "Issue an edict: build a N.E.K.O plugin, run the full court from plan to SDK-contract review to implementation"
+    },
+    {
+      "zh": "让门下省按 SDK 契约审这个插件方案，指出会踩的平台限制",
+      "en": "Have the Chancellery review this plugin plan against the SDK contract and flag platform limits"
+    },
+    {
+      "zh": "插件启动失败了，让兵部排查 entry-404 / model-403 类问题",
+      "en": "The plugin fails to start — have the Ministry of War diagnose entry-404 / model-403 issues"
+    }
+  ],
+  "members": [
+    {
+      "id": "neko-plugin-court-team-lead",
+      "displayName": {
+        "en": "Crown Prince",
+        "zh": "太子"
+      },
+      "profession": {
+        "en": "NEKO Plugin Intake",
+        "zh": "插件旨意分拣与回奏"
+      },
+      "avatar": "avatars/neko-plugin-court-team-lead.png",
+      "role": "lead"
+    },
+    {
+      "id": "neko-court-zhongshu",
+      "displayName": {
+        "en": "Secretariat",
+        "zh": "中书省"
+      },
+      "profession": {
+        "en": "Plugin Plan Design",
+        "zh": "插件方案规划"
+      },
+      "avatar": "avatars/neko-court-zhongshu.png",
+      "role": "member"
+    },
+    {
+      "id": "neko-court-menxia",
+      "displayName": {
+        "en": "Chancellery",
+        "zh": "门下省"
+      },
+      "profession": {
+        "en": "SDK Contract Review",
+        "zh": "SDK 契约审议封驳"
+      },
+      "avatar": "avatars/neko-court-menxia.png",
+      "role": "member"
+    },
+    {
+      "id": "neko-court-shangshu",
+      "displayName": {
+        "en": "Department of State",
+        "zh": "尚书省"
+      },
+      "profession": {
+        "en": "Plugin Task Dispatch",
+        "zh": "插件任务派发验收"
+      },
+      "avatar": "avatars/neko-court-shangshu.png",
+      "role": "member"
+    },
+    {
+      "id": "neko-court-gongbu",
+      "displayName": {
+        "en": "Ministry of Works",
+        "zh": "工部"
+      },
+      "profession": {
+        "en": "Plugin Implementation",
+        "zh": "插件实现与 SDK 编排"
+      },
+      "avatar": "avatars/neko-court-gongbu.png",
+      "role": "member"
+    },
+    {
+      "id": "neko-court-bingbu",
+      "displayName": {
+        "en": "Ministry of War",
+        "zh": "兵部"
+      },
+      "profession": {
+        "en": "Install & Runtime Ops",
+        "zh": "安装运行时与排错"
+      },
+      "avatar": "avatars/neko-court-bingbu.png",
+      "role": "member"
+    },
+    {
+      "id": "neko-court-hubu",
+      "displayName": {
+        "en": "Ministry of Revenue",
+        "zh": "户部"
+      },
+      "profession": {
+        "en": "Market & Capability Data",
+        "zh": "市场数据与能力统计"
+      },
+      "avatar": "avatars/neko-court-hubu.png",
+      "role": "member"
+    },
+    {
+      "id": "neko-court-libu",
+      "displayName": {
+        "en": "Ministry of Rites",
+        "zh": "礼部"
+      },
+      "profession": {
+        "en": "Docs & Companion UX",
+        "zh": "文档与陪伴体验"
+      },
+      "avatar": "avatars/neko-court-libu.png",
+      "role": "member"
+    },
+    {
+      "id": "neko-court-xingbu",
+      "displayName": {
+        "en": "Ministry of Justice",
+        "zh": "刑部"
+      },
+      "profession": {
+        "en": "Security & Contract Audit",
+        "zh": "插件安全与契约审查"
+      },
+      "avatar": "avatars/neko-court-xingbu.png",
+      "role": "member"
+    },
+    {
+      "id": "neko-court-libu-hr",
+      "displayName": {
+        "en": "Ministry of Personnel",
+        "zh": "吏部"
+      },
+      "profession": {
+        "en": "Skill & Capability Governance",
+        "zh": "技能与能力治理"
+      },
+      "avatar": "avatars/neko-court-libu-hr.png",
+      "role": "member"
+    },
+    {
+      "id": "neko-court-qintianjian",
+      "displayName": {
+        "en": "Imperial Observatory",
+        "zh": "钦天监"
+      },
+      "profession": {
+        "en": "SDK Surface Survey",
+        "zh": "SDK 能力面勘测"
+      },
+      "avatar": "avatars/neko-court-qintianjian.png",
+      "role": "member"
+    }
+  ]
+}

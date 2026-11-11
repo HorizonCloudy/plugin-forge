@@ -1,0 +1,19 @@
+{
+  "name": "plugin-forge",
+  "version": "1.2.0",
+  "description": "插件制造专家团通用范式：1 主理人 + 13 专家，契约先行、TDD、安全门禁、宿主变更影响审计、双风格文档门禁。",
+  "author": {
+    "name": "云朵",
+    "email": "HorizonCloudy@users.noreply.github.com"
+  },
+  "homepage": "https://github.com/HorizonCloudy/plugin-forge",
+  "repository": "https://github.com/HorizonCloudy/plugin-forge",
+  "license": "MIT",
+  "keywords": [
+    "plugins",
+    "multi-agent",
+    "contract-first",
+    "ste100",
+    "anti-slop"
+  ]
+}
