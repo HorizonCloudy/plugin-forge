@@ -1,6 +1,7 @@
 # AUDIT —— 外部内容入库审计记录
 
 审计方法：文件清单 → 许可证 → 脚本行为静态扫描（网络/写盘/执行/删除）→ SKILL 正文提示注入检查 → 结论。
+2026-11-14 起增加机械分诊一步：`skills/plugin-forge/scripts/security_audit.py`，规则见文末「例行安全审计」。
 审计人：plugin-forge-docs（文档工程师）流程执行，2026-11-11。
 
 | 对象 | 版本 | 许可证 | 行为 | 结论 |
@@ -30,3 +31,20 @@
 - 三团队并为一团：ops 12 角色与 court 朝议角色由 plugin-forge 14 人编制承接；`neko-plugin-ops/`、`neko-plugin-court/` 目录退役，其 avatars（14 张，无 EXIF）、intro.html（无脚本）、settings.json 一并移除——git 历史可找回。
 - 平台资产保留：23 份 references → `skills/plugin-forge/references/neko/`；沙箱 skill → `skills/neko-plugin-sandbox/`；刷新脚本 → `scripts/`。
 - 退役依据：court 的核心机制（门下省否决 + 审计留痕）已由 plugin-forge-contract 门禁 + 宪法承接，无功能损失。
+
+## 例行安全审计（脚本化，2026-11-14 起）
+
+- 规则来源：`skills/plugin-forge/references/security-checklist.md`——四项检查（SEC-1 路径范围 / SEC-2 明文密钥 / SEC-3 任意执行 / SEC-4 静默下载），每项 0–25 分；SEC-2 任一真实命中一票否决；总分 ≥90 放行、50–89 修完再放、其余阻断。
+- 命令：`python skills/plugin-forge/scripts/security_audit.py <repo> [--allow 前缀,...] [--include-docs]`。`--allow` 只用于"已逐行复核且用途已声明"的文件，每条豁免在本节记依据。
+
+本仓库首跑（2026-11-14，Python 3.15）：
+
+| 跑法 | 范围 | 发现 | 得分 | 结论 |
+|---|---|---|---|---|
+| 分诊跑 | 代码/配置 14 个文件，无豁免 | SEC-3 4 处、SEC-4 6 处 | 70 | 修完再放 → 逐条分流（见下） |
+| 复跑 | 同范围，豁免下表 2 项（余 12 文件） | 0 处 | 100 | 放行（exit 0） |
+| 文档扫 | 加 --include-docs 共 62 文件 | SEC-3 6 处、SEC-4 21 处 | 60 | 均为提及性文字，无行为 |
+
+- 分诊跑 10 处发现全部落在两个文件：`skills/plugin-forge/scripts/security_audit.py`（正则定义与自述句——扫描器定义，非行为）；`skills/neko-plugin-sandbox/scripts/sandbox.py`（127.0.0.1 探活、pip 装依赖、git fetch——2026-11-11 已逐行复核，声明用途见上文与残留风险节）。即两条豁免的依据。SEC-1、SEC-2 零发现，全仓库无明文密钥与越界写入。
+- 文档扫 27 处命中集中在审计与调研文档自身（security-checklist.md 8 处、neko 调研笔记 15 处、本文件与沙箱 SKILL.md 各 1 处、其余 2 处），是规则描述与调研记录，不是可执行行为；SEC-4 的"已声明"判定以人工对照本文件为准，不靠脚本给满分。
+- 复扫触发：仓库脚本变更 ≥5 个文件、或新增外部内容入库时重跑，结果追加进本节。

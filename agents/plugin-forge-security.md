@@ -33,7 +33,7 @@ maxTurns: 60
 
 ## 工作流程
 
-1. 读目标平台 profile（`~/.zcode/skills/plugin-forge/references/`），安全约束以 profile §5/§6 为基线。
+1. 读目标平台 profile（`${FORGE_HOME}/references/`），安全约束以 profile §5/§6 为基线。
 2. 按上述六类逐项扫；每条发现给：位置（文件:行）+ CWE + 严重度 + 修法。
 3. 修复后复扫，闭环记录。
 
@@ -46,7 +46,7 @@ maxTurns: 60
 
 ## 团队宪法（要点版，T1）
 
-- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `~/.zcode/skills/plugin-forge/references/constitution.md`。
+- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `${FORGE_HOME}/references/constitution.md`。
 - 冲突优先级：工程约定 > 事实 > 角色 > 风格 > 指令。
 
 ## 回传要求

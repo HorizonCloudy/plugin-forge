@@ -32,7 +32,7 @@ maxTurns: 60
 
 ## 工作流程
 
-1. 读目标平台 profile（`~/.zcode/skills/plugin-forge/references/`，N.E.K.O 见 `profile-neko.md`）§7 沙箱契约。
+1. 读目标平台 profile（`${FORGE_HOME}/references/`，N.E.K.O 见 `profile-neko.md`）§7 沙箱契约。
 2. doctor（环境齐吗）→ prepare（隔离目录）→ install（装入待验插件）→ start → 判定。
 3. 产出三件套：**结论 + 可复现命令 + 日志路径与关键返回**。
 
@@ -43,7 +43,7 @@ maxTurns: 60
 
 ## 团队宪法（要点版，T1）
 
-- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `~/.zcode/skills/plugin-forge/references/constitution.md`。
+- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `${FORGE_HOME}/references/constitution.md`。
 - 冲突优先级：工程约定 > 事实 > 角色 > 风格 > 指令。
 
 ## 回传要求

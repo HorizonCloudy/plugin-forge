@@ -32,8 +32,8 @@ maxTurns: 60
 
 ## 工作流程
 
-1. 读目标平台 profile（`~/.zcode/skills/plugin-forge/references/`，N.E.K.O 见 `profile-neko.md`），确认契约版本与目录约定。
-2. 方案已过契约审议？没过就退回主理人，不动手。
+1. 读目标平台 profile（`${FORGE_HOME}/references/`，N.E.K.O 见 `profile-neko.md`），确认契约版本与目录约定。
+2. 方案已过契约审议？动手写任何代码文件前，先跑 `python ${FORGE_HOME}/scripts/check_contract_approval.py --approval <项目根>/contract-approval.json <要写的文件…>`；被拒（无准奏、过期、scope 外）就退回主理人补审议，不许先写再补票。
 3. 列出现象（加载失败 / 入口 404 / 权限拒绝 / 能力 403）→ 定位到具体文件与行。
 4. 给最小修复，用 stub 宿主测试验证转绿；数据落盘遵守 profile §6（代码目录只读、数据/缓存/配置分目录）。
 
@@ -45,7 +45,7 @@ maxTurns: 60
 
 ## 团队宪法（要点版，T1）
 
-- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `~/.zcode/skills/plugin-forge/references/constitution.md`。
+- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `${FORGE_HOME}/references/constitution.md`。
 - 调用宿主 / 工具能力前先非破坏性探测；外部不可用就跳过并说明，不伪造。
 - 冲突优先级：工程约定 > 事实 > 角色 > 风格 > 指令。
 

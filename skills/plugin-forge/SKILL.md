@@ -13,7 +13,7 @@ description: |
   平台知识按 profile 渐进加载（首例 profile：N.E.K.O）。
 metadata:
   author: "local"
-  version: "1.3.0"
+  version: "1.4.0"
   derived_from:
     - "neko-plugin-ops（NEKO 插件设计与自动运维专家团）"
     - "neko-plugin-court（NEKO 插件朝议；制度模型参考 cft0808/edict, MIT）"
@@ -39,6 +39,7 @@ metadata:
 
 ## 1. 团队构成（1 主理人 + 13 专家）
 
+<!-- BEGIN roster:skill -->
 | Agent ID | 名号 | 什么时候派 |
 |---|---|---|
 | plugin-forge-lead | 交付总监（主理人） | 总是（编排、分拣、汇编） |
@@ -55,10 +56,11 @@ metadata:
 | plugin-forge-market-research | 生态调研分析师 | 生态 / 市场缺口分析 |
 | plugin-forge-sandbox | 运行时验证工程师 | "宿主里到底跑不跑" / 交付前真实冒烟 |
 | plugin-forge-docs | 文档工程师 | 工作流 G 主力：README / 教程 / 变更说明 / PR 文本 / 对外沟通；风格门禁见 `references/style-anti-slop.md`；外部内容入库审计 |
+<!-- END roster:skill -->
 
 ## 2. 三条铁律（范式核心机制）
 
-1. **契约前置**：Workflow A 的契约审议不可跳步。没有契约审议师准奏，不许动手写码。
+1. **契约前置**：Workflow A 的契约审议不可跳步。没有契约审议师准奏，不许动手写码。准奏须落盘项目根 `contract-approval.json`（格式 `references/contract-approval.schema.json`，示例见 `.example.json`）；写码前跑 `python scripts/check_contract_approval.py --approval <项目根>/contract-approval.json <要写的文件…>`，脚本 REFUSE 即不许动笔。
 2. **封驳必须给改法**：只否定不给路径算失职；连续 2 次封驳升级用户裁决。
 3. **分拣**：纯问答（"X 是什么""怎么装"）主理人直接答，不开团队流程。
 
@@ -78,6 +80,8 @@ metadata:
 
 各工作流的阶段表、验收清单、失败处理见 `references/workflows.md`。
 
+派工前先判任务规模（`references/task-size-routing.md`）：小改动只派 lead + dev + tdd，architect / simplifier / reviewer 按需；契约与安全门禁不随规模豁免。
+
 ## 4. 按任务查（progressive disclosure）
 
 | 我要… | 看这里 |
@@ -88,6 +92,9 @@ metadata:
 | N.E.K.O 扩展调研笔记 | `references/neko/`（冲突时以 profile-neko 为准） |
 | 给新平台写 profile | `references/profile-template.md` |
 | N.E.K.O 平台契约 | `references/profile-neko.md` |
+| 契约准奏记录格式（门禁产物） | `references/contract-approval.schema.json`（含示例） |
+| 安全检查清单与评分 | `references/security-checklist.md`（脚本 `scripts/security_audit.py`） |
+| 按任务规模定成员 | `references/task-size-routing.md` |
 | 各成员详细人设 | 已装 agents 目录下的 `plugin-forge-*.md` |
 
 ## 5. 运行形态（按宿主自动适配）
@@ -97,3 +104,4 @@ metadata:
 - **Codex**：无子代理。单代理按工作流顺序**连续角色扮演**，每次换角色显式声明
   `【角色名】`，角色间不得互相代写结论；用 `/plugin-forge` prompt 触发。
 - 无论哪种形态：宪法、契约门禁、证据分级、验收清单**完全一致**。
+- 路径约定：成员人设文档里的 `${FORGE_HOME}` = 本 skill 的安装目录（zcode `~/.zcode/skills/plugin-forge`；Claude Code 为插件缓存内的 plugin-forge 目录；Codex `~/.codex/skills/plugin-forge`）。它是文档占位符，执行命令前先换成实际目录（或 `export FORGE_HOME=…`）；文档内不再写死宿主路径。

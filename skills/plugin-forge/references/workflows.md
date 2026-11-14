@@ -9,13 +9,15 @@
 |---|---|---|
 | 1. 分拣 | lead | 任务一句话概括 + 确认目标平台 + 读 profile；确认是"新做"还是"改" |
 | 2. 起草方案 | planner（含糊时）→ architect | 方案 ≤500 字：定位 / 入口类型 / 数据 / 依赖 / 验收 / 失败降级 / 风险 |
-| 3. **契约审议（门禁）** | **contract** | 准奏 / 封驳（对照 profile 能力面逐条核） |
+| 3. **契约审议（门禁）** | **contract** | 准奏 / 封驳（对照 profile 能力面逐条核）；准奏落盘 `contract-approval.json` |
 | 4. 派发 | lead | 按成员拆分，无依赖的并行 |
 | 5. 实现 | tdd 先写最小测试 → dev 转绿（ architect / simplifier 并行补位） | 完整代码 + manifest |
 | 6. 运行时验证 | sandbox（+ reliability 发布就绪清单） | 隔离环境真实加载记录 |
 | 7. 验收汇编 | lead | 三段回奏（见下） |
 
 **不可跳步**：没有 contract 准奏，不许写码。
+
+写码前先过机器门禁：`python scripts/check_contract_approval.py --approval contract-approval.json <要写的文件…>`；脚本 REFUSE 即不许动笔（含 scope 外文件）。派工规模先按 `references/task-size-routing.md` 分拣：小改动只到 dev + tdd，契约与安全门禁不豁免。
 
 ## Workflow B：修一个跑不起来的插件（单成员直调）
 
@@ -108,7 +110,7 @@ contract 封驳 → planner/architect **只改被驳部分** → 重新送审 �
 - [ ] 外部输入不进 `eval`；URL 拼接有编码
 - [ ] 数据落盘有清理策略（缓存 / 数据 / 配置分目录）
 - [ ] 测试通过（正常路径 + ≥1 边界 + ≥1 错误输入）
-- [ ] 安全门禁过（无明文密钥、无注入面、依赖来源可溯）
+- [ ] 安全门禁过（`python scripts/security_audit.py <repo>` 四项评分：SEC-2 有发现阻断；总分 ≥90 放行；规则见 `references/security-checklist.md`）
 - [ ] **实际在隔离运行时加载过一次**（或明确标注"未验证"及原因），不是"文件写完就算"
 
 ## 三段回奏（最终交付格式）

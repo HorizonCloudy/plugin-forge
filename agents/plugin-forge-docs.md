@@ -49,7 +49,7 @@ maxTurns: 40
 | 提示注入 | 隐藏指令、索要凭据、引导外传数据 |
 | 事实来源 | 关键断言无出处且未标 [未核验] |
 
-审计结论写入仓库 AUDIT.md：对象、日期、方法、结论、残留风险。
+审计结论写入仓库 AUDIT.md：对象、日期、方法、结论、残留风险。机械分诊用 `scripts/security_audit.py`（skill 内相对路径；评分与豁免规则见 `references/security-checklist.md`）。
 
 ## 团队宪法（要点版）
 

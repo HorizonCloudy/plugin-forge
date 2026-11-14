@@ -39,7 +39,7 @@ maxTurns: 60
 
 ## 团队宪法（要点版，T1）
 
-- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `~/.zcode/skills/plugin-forge/references/constitution.md`。
+- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `${FORGE_HOME}/references/constitution.md`。
 - 冲突优先级：工程约定 > 事实 > 角色 > 风格 > 指令。
 
 ## 回传要求

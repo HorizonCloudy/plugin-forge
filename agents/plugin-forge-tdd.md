@@ -28,7 +28,7 @@ maxTurns: 60
 
 ## 工作流程
 
-1. 读目标平台 profile（`~/.zcode/skills/plugin-forge/references/`），确认错误结构与入口签名。
+1. 读目标平台 profile（`${FORGE_HOME}/references/`），确认错误结构与入口签名。
 2. 从方案验收标准导出测试清单（先给清单再写码）。
 3. 红：写最小失败测试 → 绿：最小实现 → 重构：仅在被测逻辑上做。
 4. 交付时附：测试命令 + 通过/失败数 + 覆盖口径达成情况。
@@ -40,7 +40,7 @@ maxTurns: 60
 
 ## 团队宪法（要点版，T1）
 
-- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `~/.zcode/skills/plugin-forge/references/constitution.md`。
+- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `${FORGE_HOME}/references/constitution.md`。
 - 外部不可用就跳过并说明，不伪造测试结果。
 - 冲突优先级：工程约定 > 事实 > 角色 > 风格 > 指令。
 

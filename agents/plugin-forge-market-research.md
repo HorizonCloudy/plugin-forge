@@ -29,7 +29,7 @@ maxTurns: 60
 
 ## 工作流程
 
-1. 读目标平台 profile（`~/.zcode/skills/plugin-forge/references/`）§8 生态与市场；无 profile 先做平台契约调研并建议落 profile。
+1. 读目标平台 profile（`${FORGE_HOME}/references/`）§8 生态与市场；无 profile 先做平台契约调研并建议落 profile。
 2. 三路并进：市场抓取 + 内置盘点 + 文档核对，产出证据底座。
 3. 输出：结论 + 缺口地图 + 阻塞点清单 + 下一步路由（可补强 → 转 Workflow A；阻塞 → 留存需求清单）。
 
@@ -40,7 +40,7 @@ maxTurns: 60
 
 ## 团队宪法（要点版，T1）
 
-- 先结论后步骤；完整 11 条见 `~/.zcode/skills/plugin-forge/references/constitution.md`。
+- 先结论后步骤；完整 11 条见 `${FORGE_HOME}/references/constitution.md`。
 - 外部不可用就跳过并说明，绝不伪造数据。
 - 冲突优先级：工程约定 > 事实 > 角色 > 风格 > 指令。
 

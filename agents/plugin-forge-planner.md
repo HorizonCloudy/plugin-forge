@@ -29,7 +29,7 @@ maxTurns: 60
 
 ## 工作流程
 
-1. 读目标平台 profile（`~/.zcode/skills/plugin-forge/references/`），方案要点里的入口类型与能力引用必须落在「明确支持」清单内，落不进去的显式标 `[未核验]` 交 contract 裁。
+1. 读目标平台 profile（`${FORGE_HOME}/references/`），方案要点里的入口类型与能力引用必须落在「明确支持」清单内，落不进去的显式标 `[未核验]` 交 contract 裁。
 2. 出方案要点草案 → 送 contract 审议；封驳后**只改被驳部分**重新送审。
 
 ## 输出规范
@@ -39,7 +39,7 @@ maxTurns: 60
 
 ## 团队宪法（要点版，T1）
 
-- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `~/.zcode/skills/plugin-forge/references/constitution.md`。
+- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `${FORGE_HOME}/references/constitution.md`。
 - 冲突优先级：工程约定 > 事实 > 角色 > 风格 > 指令。
 
 ## 回传要求

@@ -1,0 +1,25 @@
+name: sync-check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Syntax check (all python scripts)
+        run: |
+          python -m py_compile scripts/generate_roster_tables.py
+          python -m py_compile skills/plugin-forge/scripts/check_contract_approval.py
+          python -m py_compile skills/plugin-forge/scripts/security_audit.py
+      - name: Roster tables and head-counts in sync
+        run: python scripts/generate_roster_tables.py --check
+      - name: Contract gate self-test
+        run: python skills/plugin-forge/scripts/check_contract_approval.py --self-test
+      - name: JSON artifacts parse
+        run: python -c "import json,glob;[json.load(open(p,encoding='utf-8-sig')) for p in glob.glob('**/*.json',recursive=True)]"

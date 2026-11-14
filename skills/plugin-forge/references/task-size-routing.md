@@ -1,0 +1,26 @@
+# 任务规模分拣（task-size-routing）
+
+主理人接单先判规模，再决定派谁。判据取最大项：文件数、是否动 manifest/公开接口、是否新增宿主能力调用。
+
+门禁不因规模豁免：契约准奏（含 `contract-approval.json` 落盘）与安全门禁始终生效；运行时验证做不了时如实标"未验证+原因"，不豁免声明。
+
+## 三档规模
+
+| 规模 | 判定标准 | 必到成员 | 按需成员 |
+|---|---|---|---|
+| 小 | ≤3 个文件；不动 manifest 与公开接口；不新增宿主能力；修 bug / 调配置 / 改文案 | lead + dev + tdd | reviewer（复核）、sandbox（仅运行时问题） |
+| 中 | 加功能、改行为；接口不变 | Workflow A 全量七步 | architect（有接口争议时）、simplifier（有膨胀信号时）、reviewer（提交前双轴） |
+| 大 | 跨模块重构、新入口类型、换宿主/迁移存储、manifest 能力声明变更 | A 全量 + architect + reviewer + simplifier + sandbox 交付前冒烟 | reliability（发布就绪） |
+
+## 小改动精简流（只到 dev + tdd）
+
+1. lead 分拣并一句话定规模，记录判据（文件数/接口/能力三项）。跳过 planner / architect。
+2. contract 极简审议，三行结论：能力点是否仍存在 / 入口类型是否不变 / 验收口径是否不变。准奏仍落盘 `contract-approval.json`，scope 只写实际要动的 ≤3 个文件。
+3. tdd 写最小失败测试 → dev 修到绿 → 测试通过即交付。architect / simplifier / reviewer **默认不派**。
+4. 实现中发现要动接口 / manifest / 新能力：立即停下，升档重走第 2 步，不得按小改动继续写。
+
+## 原则
+
+- architect / simplifier / reviewer 是按需角色：出接口争议、出膨胀信号、要提交前双轴审查时才派；派了就要有产出（图 / 删改清单 / 修法清单）。
+- 派工可以降级，责任不能降级：宪法第 5 条（默认带测试与 Review）在小改动下合并为一次简短检查，不省略。
+- 规模由 lead 判定并写明依据；用户对规模有异议时按用户档位走，lead 记录分歧。

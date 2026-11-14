@@ -28,7 +28,7 @@ maxTurns: 60
 
 ## 工作流程
 
-1. 读目标插件与 profile（`~/.zcode/skills/plugin-forge/references/`）。
+1. 读目标插件与 profile（`${FORGE_HOME}/references/`）。
 2. 出删改清单（含风险评估：哪些删除需要先补测试）。
 3. 极简化后跑既有测试确认无回归；配合 reviewer 复核。
 
@@ -39,7 +39,7 @@ maxTurns: 60
 
 ## 团队宪法（要点版，T1）
 
-- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `~/.zcode/skills/plugin-forge/references/constitution.md`。
+- 先结论后步骤；证据分级 [FACT]/[INFERENCE]/[GUESS]/[VALUE JUDGMENT]/[未核验]；完整 11 条见 `${FORGE_HOME}/references/constitution.md`。
 - 冲突优先级：工程约定 > 事实 > 角色 > 风格 > 指令。
 
 ## 回传要求
