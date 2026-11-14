@@ -48,3 +48,11 @@
 - 分诊跑 10 处发现全部落在两个文件：`skills/plugin-forge/scripts/security_audit.py`（正则定义与自述句——扫描器定义，非行为）；`skills/neko-plugin-sandbox/scripts/sandbox.py`（127.0.0.1 探活、pip 装依赖、git fetch——2026-11-11 已逐行复核，声明用途见上文与残留风险节）。即两条豁免的依据。SEC-1、SEC-2 零发现，全仓库无明文密钥与越界写入。
 - 文档扫 27 处命中集中在审计与调研文档自身（security-checklist.md 8 处、neko 调研笔记 15 处、本文件与沙箱 SKILL.md 各 1 处、其余 2 处），是规则描述与调研记录，不是可执行行为；SEC-4 的"已声明"判定以人工对照本文件为准，不靠脚本给满分。
 - 复扫触发：仓库脚本变更 ≥5 个文件、或新增外部内容入库时重跑，结果追加进本节。
+
+### 豁免复核（2026-11-14，对照已推送树 08e3c77 逐条核对）
+
+- 复跑命令（9 文件 0 发现，总分 100，exit 0）：`python skills/plugin-forge/scripts/security_audit.py . --allow skills/plugin-forge/scripts/security_audit.py,skills/neko-plugin-sandbox/scripts/sandbox.py`
+- 豁免 1 `skills/plugin-forge/scripts/security_audit.py`：**保留**。6 处命中（23/113/125/139/149 行）全部是模式表定义与文件头说明——扫描器自身无网络、无执行、无写盘行为，符合 security-checklist.md 使用规则 3。边界：该豁免仅覆盖"此文件是扫描器"这一现状；日后给扫描器加入任何行为，本依据即失效，须重新逐行复核。
+- 豁免 2 `skills/neko-plugin-sandbox/scripts/sandbox.py`：**保留**。4 处命中均为已声明功能：urllib 仅请求 `http://127.0.0.1:<port>` 探活（显式绕过本机代理，原因写在代码注释）；git fetch 拉官方公开仓库（用途见沙箱 SKILL.md「为什么每次都要 sync」节）；PyPI 装依赖见上文「残留风险」节。撤销豁免只能砍沙箱核心功能，故保留；命中属实、用途属实，豁免即如实记录。
+- 口径修正：本推送树实测分诊跑 11 文件、复跑 9 文件、文档跑（同两豁免）57 文件 SEC-3 6 处 / SEC-4 22 处；首记的 14/12/62/21 为提交前工作区状态，各跑得分（70/100/60）不变。
+- CI 状态：sync-check #1 已在 GitHub Actions 真实 runner 通过（08e3c77，9s，四步全绿）。
