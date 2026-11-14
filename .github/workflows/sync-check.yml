@@ -2,7 +2,9 @@ name: sync-check
 
 on:
   push:
+    branches: [main]
   pull_request:
+    branches: [main]
 
 jobs:
   check:
@@ -17,6 +19,8 @@ jobs:
           python -m py_compile scripts/generate_roster_tables.py
           python -m py_compile skills/plugin-forge/scripts/check_contract_approval.py
           python -m py_compile skills/plugin-forge/scripts/security_audit.py
+      - name: Roster generator self-test
+        run: python scripts/generate_roster_tables.py --self-test
       - name: Roster tables and head-counts in sync
         run: python scripts/generate_roster_tables.py --check
       - name: Contract gate self-test

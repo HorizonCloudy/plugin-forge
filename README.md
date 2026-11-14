@@ -34,6 +34,7 @@
 - 工作流 H：宿主破坏性变更（RFC/changelog）对插件机队的影响审计与上游回帖礼仪。
 - 双风格文档门禁：`plugin-forge-docs` 内置 ASD-STE100 + humanizer（中英同等），见 `skills/plugin-forge/references/style-anti-slop.md`；外部内容入库先过 `AUDIT.md` 流程（四项安全检查与评分规则见 `skills/plugin-forge/references/security-checklist.md`）。
 - 平台 profile：契约唯一权威 `skills/plugin-forge/references/profile-neko.md`（基线 0984249，文首 ⓪ 陈旧门禁一条命令判时效）。NEKO 扩展阅读在 `references/neko/`。
+- 版本号只有一个来源：`.claude-plugin/plugin.json` 的 `version`，即插件发布号。`SKILL.md` 与 `agents/*.md` 不带自己的版本号，避免两处版本各说各话。
 
 ## 安装
 
@@ -45,7 +46,7 @@
 ## 目录
 
 ```
-agents/            14 个专家人设
+agents/            14 个人设：1 主理人 + 13 专家
 skills/plugin-forge/       范式 skill + references（含 neko/ 扩展阅读 23 份）+ scripts（契约门禁校验、安全审计扫描）
 skills/neko-plugin-sandbox/ NEKO 运行时沙箱 skill + scripts/sandbox.py
 codex/prompts/     Codex 单代理运行入口

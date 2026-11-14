@@ -13,7 +13,6 @@ description: |
   平台知识按 profile 渐进加载（首例 profile：N.E.K.O）。
 metadata:
   author: "local"
-  version: "1.4.0"
   derived_from:
     - "neko-plugin-ops（NEKO 插件设计与自动运维专家团）"
     - "neko-plugin-court（NEKO 插件朝议；制度模型参考 cft0808/edict, MIT）"
@@ -105,3 +104,4 @@ metadata:
   `【角色名】`，角色间不得互相代写结论；用 `/plugin-forge` prompt 触发。
 - 无论哪种形态：宪法、契约门禁、证据分级、验收清单**完全一致**。
 - 路径约定：成员人设文档里的 `${FORGE_HOME}` = 本 skill 的安装目录（zcode `~/.zcode/skills/plugin-forge`；Claude Code 为插件缓存内的 plugin-forge 目录；Codex `~/.codex/skills/plugin-forge`）。它是文档占位符，执行命令前先换成实际目录（或 `export FORGE_HOME=…`）；文档内不再写死宿主路径。
+- 版本号只认 `.claude-plugin/plugin.json` 的 `version`（插件发布号）。本文件与 `agents/*.md` 不带版本号，避免两处漂移。
