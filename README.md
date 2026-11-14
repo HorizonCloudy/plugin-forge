@@ -35,7 +35,7 @@ N.E.K.O 是 Apache-2.0 项目。本仓库只引用它的路由、契约、端口
 - TDD + 极简 + 安全门禁 + 运行时验证（`skills/neko-plugin-sandbox/` 真实冒烟）。
 - 工作流 H：宿主破坏性变更（RFC/changelog）对插件机队的影响审计与上游回帖礼仪。
 - 双风格文档门禁：`plugin-forge-docs` 内置 ASD-STE100 + humanizer（中英同等），见 `skills/plugin-forge/references/style-anti-slop.md`；外部内容入库先过 `AUDIT.md` 流程（四项安全检查与评分规则见 `skills/plugin-forge/references/security-checklist.md`）。
-- 平台 profile：契约唯一权威 `skills/plugin-forge/references/profile-neko.md`（基线 0984249，文首 ⓪ 陈旧门禁一条命令判时效）。NEKO 扩展阅读在 `references/neko/`。
+- 平台 profile：N.E.K.O 平台契约的**本地权威** `skills/plugin-forge/references/profile-neko.md`（基线 0984249）。它不是「唯一」权威，也不能替代上游：文首 ⓪ 陈旧门禁若返回 404，§3/§7 立即降为过期面，先按新 main 重核再用。与 workshop `rules.json` 的编号冲突时，以 §3 入口规则与 `AGENTS.md` 为准并在 AUDIT 记录。NEKO 扩展阅读在 `references/neko/`。
 - 版本号只有一个来源：`.claude-plugin/plugin.json` 的 `version`，即插件发布号。`SKILL.md` 与 `agents/*.md` 不带自己的版本号，避免两处版本各说各话。
 
 ## 安装

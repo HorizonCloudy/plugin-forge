@@ -49,7 +49,7 @@ SEC2 = [
     (r"\bAKIA[0-9A-Z]{16}\b", "AWS access key"),
     (r"\bxox[baprs]-[A-Za-z0-9-]{10,}\b", "Slack token"),
     (r"-----BEGIN (?:[A-Z ]+)?PRIVATE KEY-----", "私钥块"),
-    (r"(?i)\b(?:password|passwd|secret|api_?key|access_?token|auth_?token|client_?secret|private_?token)\b['\"]?\s*[:=]\s*['\"]?([^'\",\s;{}]{12,})", "password/secret 明文赋值"),
+    (r"(?i)(?<![A-Za-z])(?:[A-Za-z0-9]+_)*(?:password|passwd|secret|api_?key|access_?token|auth_?token|client_?secret|private_?token)(?:_[A-Za-z0-9]+)*(?![A-Za-z])['\"]?\s*[:=]\s*['\"]?([^'\",\s;{}]{12,})", "password/secret 明文赋值"),
 ]
 IGNORE_VAL = re.compile(r"(?i)^(?:your[_-]|(?:changeme|placeholder|example|dummy|sample|test|fake|redacted|masked|todo|noreply|none|null|empty)(?![A-Za-z])|x{3,}|\*{3,}|<|\$\{|\{|\[)")
 SEC3 = [
@@ -179,8 +179,10 @@ def _self_test():
     """正例反例各一条，钉住 SEC-1/SEC-2 的实际匹配面（CI 跑，见 sync-check.yml）。"""
     B = chr(92)
 
+    TABLES_BY_ID = {"SEC-1": SEC1, "SEC-2": SEC2, "SEC-3": SEC3, "SEC-4": SEC4}
+
     def hit(cid, line):
-        for pat, _note in (SEC1 if cid == "SEC-1" else SEC2):
+        for pat, _note in TABLES_BY_ID[cid]:
             for mo in re.finditer(pat, line):
                 if cid != "SEC-2":
                     return True
@@ -212,6 +214,17 @@ def _self_test():
         ("SEC-2", K + ' = "' + "changeme" + '"', False),
         ("SEC-2", TK + ' = "' + "x" * 15 + '"', False),
         ("SEC-2", "the pass" + "word field is documented only", False),
+        # 前缀名：下划线算单词字符，旧的 \b 会在 OPENAI_ / DB_ / AWS_ 这里失配。
+        ("SEC-2", "OPENAI" + "_" + "API" + "_KEY=" + V, True),
+        ("SEC-2", "DB" + "_" + "PASSWORD" + "=" + V, True),
+        ("SEC-2", "AWS" + "_" + "SECRET" + "_ACCESS" + "_" + "KEY" + " = '" + V + "'", True),
+        ("SEC-2", "MY" + "_" + "SECRET=" + V, True),
+        ("SEC-2", "pass" + "phrase_length = \"" + V + "\"", False),
+        ("SEC-3", "subprocess.run(cmd, " + "shell=True)", True),
+        ("SEC-3", "comment mentions shell=True only", True),
+        ("SEC-3", "we do not shell=" + "\" out here", False),
+        ("SEC-4", "curl -sS https://x.sh | " + "sh", True),
+        ("SEC-4", "普通说明文字，没有取回动作", False),
     ]
     bad = [c for c in cases if hit(c[0], c[1]) != c[2]]
     for cid, line, want in bad:
