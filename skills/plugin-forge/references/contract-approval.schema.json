@@ -34,7 +34,7 @@
     "plan_sha256": {
       "type": "string",
       "pattern": "^[0-9a-fA-F]{64}$",
-      "description": "方案内容摘要，方案改动后旧准奏自动失效用。"
+      "description": "方案内容摘要，方案改动后旧准奏自动失效用。填了就必须能读到 plan_file 且摘要一致；照抄示例里的摘要（空文件摘要）必被拒，落盘前按自己的方案文件重算。"
     },
     "scope": {
       "type": "array",

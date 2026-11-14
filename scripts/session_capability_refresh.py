@@ -227,8 +227,9 @@ def build_context(cur, truncated, notes):
     snap.append("marketplaces: %d 目录 / %d 份清单（plugin-data 为数据目录，无清单）"
                 % (len(cur["marketplace_dirs"]), len(cur["marketplaces"])))
     try:
-        snap.append("专家团插件 neko-plugin-ops v%s（my-experts 唯一插件）"
-                    % _fp(str(_read(NEKO + "/.codebuddy-plugin/plugin.json").get("version", "?"))))
+        snap.append("专家团插件 neko-plugin-ops v%s（my-experts 共 %s 个插件）"
+                    % (_safe(_read(NEKO + "/.codebuddy-plugin/plugin.json").get("version", "?"), 16),
+                       _safe(cur["marketplaces"].get("my-experts", {}).get("plugins", "?"), 8)))
     except Exception:
         snap.append("插件版本快照不可用")
     snap.append("skills: %d 个（清单由 Task A / neko-skill-ops 维护）" % cur["skills_count"])

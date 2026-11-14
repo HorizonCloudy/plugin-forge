@@ -15,7 +15,7 @@
 规则
   - 只拦「代码类」文件（CODE_EXTS 扩展名 + MANIFEST_NAMES 清单文件名）；文档、数据改动不拦。
   - 放行条件（全部满足）：schema == plugin-forge/contract-approval@1；decision == "approved"；
-    issued_by == "plugin-forge-contract"；未到 expires_at；目标路径命中 scope 的某个 glob。
+    issued_by == "plugin-forge-contract"（自证字符串，只验记录不验身份）；未到 expires_at（缺省视为长期有效）；目标路径命中 scope 的某个 glob。
   - glob 语法：* 不跨 /；** 跨目录（src/** 覆盖 src 下任意深度）；不含 / 的模式按文件名匹配。
   - 路径在项目根之外 → 拒绝（路径范围铁律）。
   - 记录里填了 plan_sha256 时，plan_file 的内容必须还能算出同一个摘要；对不上就是方案被改过，旧准奏失效。未填 plan_sha256 的旧记录不受影响。
@@ -168,7 +168,11 @@ def check_targets(data, root, targets):
     results = []
     for t in targets:
         p = os.path.realpath(t)
-        rel = os.path.relpath(p, root).replace("\\", "/")
+        try:
+            rel = os.path.relpath(p, root).replace("\\", "/")
+        except ValueError:
+            # 跨盘符没有公共祖先：按根外处理，不能抛异常把整轮判定打掉
+            rel = "../" + p.replace("\\", "/")
         if not is_protected(p):
             results.append((rel, True, "非代码文件，不入门禁"))
             continue

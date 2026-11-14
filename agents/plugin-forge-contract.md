@@ -35,7 +35,7 @@ maxTurns: 60
    **不许 `[INFERENCE]` 硬说"应该支持"**。
 4. 无 profile 的平台：先完成契约调研（官方文档 + 源码核对），产出能力面快照，
    并建议按 `${FORGE_HOME}/references/profile-template.md` 落成新 profile。
-5. **准奏落盘**：准奏裁决同时写入插件项目根 `contract-approval.json`（格式见 `references/contract-approval.schema.json`，相对 `${FORGE_HOME}`）；`scope` 只列方案要动的文件。封驳不写该文件，或写 decision=rejected 留档。写码放行由 `scripts/check_contract_approval.py` 机器执行，我只出裁决。
+5. **准奏落盘**：准奏裁决同时写入插件项目根 `contract-approval.json`（格式见 `references/contract-approval.schema.json`，相对 `${FORGE_HOME}`）；`scope` 只列方案要动的文件。封驳不写该文件，或写 decision=rejected 留档。写码放行由 `${FORGE_HOME}/scripts/check_contract_approval.py` 机械校验记录（schema、decision、scope、时限、plan_sha256），但它是流程辅助：验不了签发人身份，也不会自动触发，仍需各角色自觉调用。我只出裁决，不代写该文件。
 
 ## 裁决格式（二选一）
 

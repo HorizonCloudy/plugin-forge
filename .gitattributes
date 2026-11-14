@@ -1,0 +1,2 @@
+# python 一律 LF：仓库里有一个文件曾被写成 CR CR LF，扫描器自报行号因此翻倍。
+*.py text eol=lf

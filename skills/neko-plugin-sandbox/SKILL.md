@@ -91,6 +91,10 @@ python $S plugin-rm --root <ROOT> --id <插件id>          # 撤掉插件，恢�
    清理只为不往宿主日志里注入一个"嵌入式"的假身份。**别再把"服务起来了但插件没加载"归因到它**——
    先看下面坑 #6（`auto_start` 默认 false）。
 
+6. **宿主凭据不进沙箱** → 起服务前按变量名形状删掉带 TOKEN / SECRET / KEY / PASSWORD /
+   CREDENTIAL 的宿主环境变量，并在日志里报删了哪些。这是纵深防御的一层，不是防火墙：
+   插件仍以同一用户身份持有完整文件读权限与外网出口。
+
 **一处做不到的隔离（必须知道）**：插件的**代码**必须落在 `<ROOT>/repo/plugin/plugins/<id>/`，
 因为宿主就是按这个路径扫描的。用 `--repo` 挂载别人的 checkout 时，`plugin-add` 会写进**那个仓库**的
 `plugin/plugins/` 下（表现为 `git status` 里的 `?? plugin/plugins/<id>/`）。这是上游允许的本地插件放置方式，

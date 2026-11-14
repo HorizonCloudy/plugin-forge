@@ -433,9 +433,21 @@ def cmd_plugin_rm(args):
     log("plugin/plugins 现状：" + (dirty.replace("\n", " | ") if dirty else "干净"))
 
 
+# 宿主环境里的凭据不该进被测第三方插件的进程。按名字形状删，不按名字白名单加：
+# 缺一个必需变量会让沙箱以一个看不出关联的错误崩掉，而漏删只影响纵深防御的一层。
+# 不删 AUTH 形状的名字：SSH_AUTH_SOCK 会命中它，靠 git over SSH 的插件会丢掉 agent。
+SECRET_ENV_RE = re.compile(
+    r"(?i)(^|_)(TOKEN|SECRET|PASSWORD|PASSWD|PASS|KEY|APIKEY|CREDENTIAL|CREDENTIALS)($|_)")
+
+
 def _server_env(root, args):
     """构造隔离后的服务环境。LOCALAPPDATA 才是 Windows 上 N.E.K.O 的数据根。"""
     env = os.environ.copy()
+    dropped = [k for k in env if SECRET_ENV_RE.search(k)]
+    for k in dropped:
+        env.pop(k, None)
+    log("已从沙箱环境删除 %d 个凭据形状变量（%s）" %
+        (len(dropped), ", ".join(sorted(dropped)[:6]) + ("…" if len(dropped) > 6 else "")))
     env["NEKO_USER_PLUGIN_SERVER_PORT"] = str(args.port_resolved)
     # 兜底：即便有人从外部环境带进 NEKO_PLUGIN_HOSTED_BY_AGENT 也清掉。注意这一条现在已经
     # 不是 autostart 的开关了——上游 http_app.py:190 只看 build_plugin_server_app(manage_lifecycle=)

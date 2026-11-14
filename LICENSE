@@ -27,5 +27,8 @@ Third-party attribution:
   links, not copies.
 - references/neko/system.llm is an archived third-party system prompt kept for study. Its
   provenance and licence are not established (see AUDIT.md). It is not policy for this team.
+- skills/plugin-forge/references/delivery-self-check.md is a third-party behaviour gate whose
+  provenance and licence are not established (see AUDIT.md). It is not enforced as policy
+  until that is settled.
 - N.E.K.O is an Apache-2.0 project. This repository cites its routes, contracts and ports as
   verifiable facts and contains none of its source.

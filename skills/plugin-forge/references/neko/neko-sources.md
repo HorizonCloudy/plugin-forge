@@ -28,9 +28,9 @@
 - `neko-plugin-sdk` skill（本机）：`plugin.toml`、NekoPluginBase、装饰器（`@plugin_entry` / `@lifecycle` / `@timer_interval` / `@message` / `@llm_tool`）、`Ok` / `Err` 结果类型、stub-SDK 测试模式、常见故障 `entry-404` / `startup-failed` / `model-403`。
 
 ## 4. 实战工作坊（补充源）
-- **仓库**：https://github.com/addsas222/neko-plugin-workshop —— N.E.K.O. 插件工坊（一句话生成猫娘计划插件的 AI 工坊；MIT，Owner fengdiehualian）。
+- **仓库**：https://github.com/fengdiehualian/neko-plugin-workshop —— N.E.K.O. 插件工坊（一句话生成猫娘计划插件的 AI 工坊；MIT，Owner fengdiehualian）。
 - **定位**：面向"零代码"用户的插件生成器，但对插件开发者是**真实插件范式语料库**：内置官方插件规范 skill（`packs/`，含 15 页官方文档引用 + 15 条铁律）、市场能力使用率统计与全量插件卡片。
-- **数据时效警告（勿引用旧值）**：工作坊 README 所称「46 个官方市场插件源码（`market-corpus/`）」及旧统计 `llm_tool` 50% / `push_message` 57% / `store` 37% 均已过时且与实测冲突；当前主分支已无 `market-corpus/` 与根级 `references/`，真实统计文件位于 `packs/neko-plugin/skill/neko-plugin-dev/references/market-patterns.md`，覆盖 **127 个在架插件（126 份可读源码）**。使用率一律以本包 `references/neko-market-patterns.md` 为准（`@llm_tool` 52% / `push_message` v2 44% / `store` 15% 等，2026-10-26 抓取）。**此 127/126 为能力统计样本分母，2026-11-06 复核确认不改**（在架总数 2026-11-06 复核仍为 135，属另一时点，勿混用）。
+- **数据时效警告（勿引用旧值）**：工作坊 README 所称「46 个官方市场插件源码（`market-corpus/`）」及旧统计 `llm_tool` 50% / `push_message` 57% / `store` 37% 均已过时且与实测冲突；当前主分支仍有 `market-corpus/`（2026-11-14 实测 128 项），但根级 `references/` 已无，真实统计文件位于 `packs/neko-plugin/skill/neko-plugin-dev/references/market-patterns.md`，覆盖 **127 个在架插件（126 份可读源码）**。使用率一律以本包 `references/neko-market-patterns.md` 为准（`@llm_tool` 52% / `push_message` v2 44% / `store` 15% 等，2026-10-26 抓取）。**此 127/126 为能力统计样本分母，2026-11-06 复核确认不改**（在架总数 2026-11-06 复核仍为 135，属另一时点，勿混用）。
 - **工具链（可借鉴定）**：`cli.mjs`（scaffold/verify）、`mcp.mjs`（MCP：`wb_scaffold` / `wb_verify` / `wb_install_skill`）、`wb-studio.mjs`（网页工坊）、`src/index.ts`（生成→check→build 闭环内核 + 错误解析器）。
 - **插件市场**：https://market.project-neko.cn（上架插件参考）。
 - **市场惯用法速查（已蒸馏）**：`references/neko-market-patterns.md` —— 127 个在架插件能力使用率 + 四大惯用法，提炼自上游工作坊 `packs/neko-plugin/skill/neko-plugin-dev/references/market-patterns.md`（数据 2026-10-26 抓取）。**口径保护**：此处 127/126 是该次能力统计的样本分母（固定历史快照），2026-11-06 复核时**未改**；市场在架总数 2026-11-04 为 135、2026-11-06 复核仍为 135（见 `references/neko-ecosystem-research-playbook.md`），两者不可混用，改分母会使全部百分比失效。

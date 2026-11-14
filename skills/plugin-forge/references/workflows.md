@@ -112,7 +112,7 @@ contract 封驳 → planner/architect **只改被驳部分** → 重新送审 �
 - [ ] 外部输入不进 `eval`；URL 拼接有编码
 - [ ] 数据落盘有清理策略（缓存 / 数据 / 配置分目录）
 - [ ] 测试通过（正常路径 + ≥1 边界 + ≥1 错误输入）
-- [ ] 安全门禁过（`python scripts/security_audit.py <repo>` 四项评分：SEC-2 有发现阻断；总分 ≥90 放行；规则见 `references/security-checklist.md`）
+- [ ] 安全门禁过（`python ${FORGE_HOME}/scripts/security_audit.py <repo>` 四项评分：SEC-2 有发现阻断；总分 ≥90 放行；规则见 `references/security-checklist.md`）
 - [ ] **实际在隔离运行时加载过一次**（或明确标注"未验证"及原因），不是"文件写完就算"
 
 ## 三段回奏（最终交付格式）

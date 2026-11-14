@@ -20,7 +20,7 @@ gh api repos/Project-N-E-K-O/N.E.K.O/contents/scripts/custom_channels/neko_chann
 
 
 > 首例平台 profile。团队核心平台无关，接入别的平台请另写 profile，不要改本文件语义。
-> **核验基线：上游 `Project-N-E-K-O/N.E.K.O` main @ `d597dae`（2026-11-10 实读源码）**；
+> **核验基线：上游 `Project-N-E-K-O/N.E.K.O` main @ `0984249`（源码在 `d597dae` 2026-11-10 实读，2026-11-11 经 diff 确认契约零变化后推进，见文首 ⓪ 与 §10）**；
 > 沙箱契约另经 `neko-plugin-sandbox` 复核（commit `645da54`，2026-11-07）。
 > 每条能力面结论带 `文件:符号名`（裸行号随上游 PR 漂移，不单独作锚；确需行号时同时给符号名）。上游若升版，先复核再改。
 
@@ -119,7 +119,7 @@ gh api repos/Project-N-E-K-O/N.E.K.O/contents/scripts/custom_channels/neko_chann
 - 端口 env `NEKO_USER_PLUGIN_SERVER_PORT`（上游默认 48916，standalone 占用时向后找并回写）
   `[未核验：取自沙箱契约表所引 config/network.py:193，本轮未复述读行]`。
 - **只读判定路由** `[FACT]`：`GET /health`(health.py:19)、`/available`:24、`/server/info`:32、
-  `GET /plugins`(plugins.py:42)、`GET /plugin/status`:35、`GET /plugin/{id}`:53、
+  `GET /plugins`(plugins.py:42)、`GET /plugin/status`:35、`GET /plugins/{plugin_id}`:53、
   `GET /plugin/messages`(messages.py:22)、`GET /plugin/metrics[/{id}[/history]]`(metrics.py:26/34/42)、
   `GET /plugin/{id}/logs` 及 `/files`、`/directory`、`/export`(logs.py:81/104/112/120)、
   hosted UI：`GET /plugin/{id}/surfaces`(plugin_ui.py:607)、`/hosted-ui/source`:621、`/hosted-ui/context`:646、`/ui-info`:594、
@@ -137,7 +137,7 @@ gh api repos/Project-N-E-K-O/N.E.K.O/contents/scripts/custom_channels/neko_chann
   `build`、`install`、`analyze`、`publish` `[FACT] plugin/neko_plugin_cli/cli.py:105-113` + 各 `*_cmd.register`
   （`sync` 由 `deps_cmd.py` 注册；`validate_cmd.py` 存在但**不注册动词**，是 check/precheck 的内部件）。
   **没有 `run` / `release` / `deps` 动词** —— 别按这些名字调，会 unknown command。
-- 沙箱脚本：`neko-plugin-ops/skills/neko-plugin-sandbox/scripts/sandbox.py`（`doctor` / `start` / `inspect` …）。
+- 沙箱脚本：`skills/neko-plugin-sandbox/scripts/sandbox.py`（`doctor` / `prepare` / `sync` / `install` / `plugin-add` / `plugin-rm` / `serve` / `start` / `status` / `stop`）。原 `neko-plugin-ops/` 那份已在 v2.0.0 退役（AUDIT.md 整合记录），缺 plugin-id 校验与停止前的进程身份检查，不要用。`inspect` 是宿主 `neko-plugin` CLI 的输出对象，不是沙箱子命令。
   加载插件前 `uv run neko-plugin check <id>` 需 0 error；`inspect` 出现 "declared but NOT registered" = entry-404 根因。
 
 ### 7.1 打包与自安装（本机实测 2026-11-12；下列符号已在 main 复核存在，行号按当次基线，照抄前对一眼）
@@ -181,7 +181,7 @@ gh api repos/Project-N-E-K-O/N.E.K.O/contents/scripts/custom_channels/neko_chann
   `[FACT] plugin_projects.py:30`，含 `/{project_id}/toolchain`:163、`/publish-status`:171、`/publish-task`:196）
   与 `/plugin-cli/*`（`/plugins`:265、`/packages`:273、`/inspect`:305、`/verify`:316、`/build`:281、`/install`:327）在宿主进程里调 CLI。
 - **沙箱不验 Market 提审/发布**（要真实 GitHub 凭据，触红线）；最多验到桥接可达 + 未授权时干净拒绝。
-- 市场惯用法历史样本数据在原 `neko-plugin-ops/references/neko-market-patterns.md`（127 样本 @2026-10-26，分母固定）。
+- 市场惯用法历史样本数据在本仓库 `references/neko/neko-market-patterns.md`（原 `neko-plugin-ops/` 那份随 v2.0.0 退役；127 样本 @2026-10-26，分母固定）。
 
 ## 9. 高频封驳原因（NEKO 特有）
 1. 方案要表情 / 动作 / 情绪 / 桌面交互事件 API（平台没有；只有 §4 的只读活动快照）
@@ -194,7 +194,7 @@ gh api repos/Project-N-E-K-O/N.E.K.O/contents/scripts/custom_channels/neko_chann
 8. 往安装目录写文件 / 改写宿主配置（含"插件自注册"）—— 违反 §6
 9. 调用不存在的 CLI 动词（`run` / `release` / `deps` / `validate`）
 10. 入口的 `description` / `input_schema` 脱离对话历史就填不对；或入口被中途取消后留半态、被重复调用不安全（见 §3）
-11. Market 发布的 caller 权限没覆盖 reusable job 声明：neko-plugin 模板（`plugin-market-actions-v1`）生成的 `release.yml` caller 只给 `contents: write`，而上游 `plugin-market-release.yml@main` 的产物 job 声明 `id-token: write` + `attestations: write` → 每次 tag 的 Release job 直接 `startup_failure`（1 秒即挂，无步骤日志）。修法：caller `permissions:` 补这两个 scope（模板上游修前先手动补）；判定 = Release run 1s 内 startup_failure 且无步骤日志。
+11. Release job 的 `permissions:` 缺 `id-token: write` / `attestations: write` → 每次 tag 的 Release job 直接 `startup_failure`（1 秒即挂，无步骤日志）。判定 = Release run 1s 内 startup_failure 且无步骤日志。先查再生效：模板 `plugin-market-actions-v1` 的 `render_release_workflow` 在 main（`generator.py:824-836`）与本 profile 钉的两个基线上都已写全 `contents` + `id-token` + `attestations` 三项，所以新生成的 `release.yml` 不该缺；缺的是改名前旧模板产出的历史文件。修法：只给自己仓库那份 caller 补齐三项，别改上游。
 12. 缺 `.vscode/settings.json` / `tasks.json`：Market 的 Release check（`neko-plugin check -r`）硬性要求这两个文件存在且为合法 JSON，缺失即阻断发布；Verify 流程先挂 Ruff 时该错误从不暴露（步骤顺序掩盖）。修法：`neko-plugin setup-repo <dir> --no-readme --no-tests --no-gitignore` 只生成支持文件；入库前把 `nekoPlugin.repoRoot` 的本机绝对路径改为空串（公开仓不带机器路径）。
 
 ## 10. 复核记录
