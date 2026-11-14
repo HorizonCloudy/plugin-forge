@@ -51,7 +51,7 @@ SEC2 = [
     (r"-----BEGIN (?:[A-Z ]+)?PRIVATE KEY-----", "私钥块"),
     (r"(?i)\b(?:password|passwd|secret|api_?key|access_?token|auth_?token|client_?secret|private_?token)\b\s*[:=]\s*['\"]([^'\"]{12,})['\"]", "password/secret 明文赋值"),
 ]
-IGNORE_VAL = re.compile(r"(?i)^(?:your[_-]|changeme|placeholder|example|dummy|sample|test|fake|redacted|masked|x{3,}|\*{3,}|<|\$\{|\{|\[|todo|noreply|none|null|empty)")
+IGNORE_VAL = re.compile(r"(?i)^(?:your[_-]|(?:changeme|placeholder|example|dummy|sample|test|fake|redacted|masked|todo|noreply|none|null|empty)(?![A-Za-z])|x{3,}|\*{3,}|<|\$\{|\{|\[)")
 SEC3 = [
     (r"(?<![\w.])(?:eval|exec)\s*\(", "eval/exec 动态执行"),
     (r"shell\s*=\s*True", "subprocess shell=True"),
@@ -84,27 +84,48 @@ def _utf8():
         pass
 
 
-def iter_files(root, include_docs, allow):
-    allow = [a.replace("\\", "/").lstrip("./") for a in allow]
+def iter_files(root, include_docs, allow, skips=None):
+    """产出 (rel, full)。skips 收集被排除的条目和原因：审计报告要能说明自己没看什么，
+    而不是让"0 发现"读起来像全覆盖。
+    """
+    if skips is None:
+        skips = []
+    allow = [a.replace("\\", "/") for a in allow]
+    allow = [(a[2:] if a.startswith("./") else a).rstrip("/") for a in allow]
     for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = sorted(d for d in dirnames if d not in SKIP_DIRS)
+        kept = []
+        for d in sorted(dirnames):
+            if d in SKIP_DIRS:
+                rel = os.path.relpath(os.path.join(dirpath, d), root).replace("\\", "/")
+                skips.append(rel + "/*（构建/缓存目录，整目录跳过）")
+            else:
+                kept.append(d)
+        dirnames[:] = kept
         for fn in sorted(filenames):
             full = os.path.join(dirpath, fn)
             rel = os.path.relpath(full, root).replace("\\", "/")
-            if any(rel.startswith(a) for a in allow):
+            if any(rel == a or rel.startswith(a + "/") for a in allow):
+                skips.append(rel + "（--allow 豁免）")
                 continue
             ext = os.path.splitext(fn)[1].lower()
             pool = CODE_EXTS | CONFIG_EXTS | (DOC_EXTS if include_docs else set())
-            if ext not in pool:
+            # 无扩展名文件（Dockerfile / Makefile / 无后缀脚本）和 .env* 也进池：明文密钥最常
+            # 落在这两类里，旧版只按扩展名过滤，等于对它们失明。
+            low = fn.lower()
+            if ext and ext not in pool and not low.startswith(".env") and not low.endswith(".env"):
+                skips.append(rel + "（扩展名 " + ext + " 不在扫描池）")
                 continue
             try:
                 if os.path.getsize(full) > MAX_BYTES:
+                    skips.append(rel + "（超过 2 MiB，未读）")
                     continue
                 with open(full, "rb") as f:
                     head = f.read(4096)
                 if b"\x00" in head:
+                    skips.append(rel + "（含 NUL，按二进制跳过）")
                     continue
-            except OSError:
+            except OSError as e:
+                skips.append(rel + "（stat 或 open 失败：" + type(e).__name__ + "）")
                 continue
             yield rel, full
 
@@ -113,16 +134,17 @@ def scan(root, include_docs, allow):
     findings = {c: [] for c in CHECKS}
     seen = set()
     scanned = 0
-    for rel, full in iter_files(root, include_docs, allow):
+    skips = []
+    for rel, full in iter_files(root, include_docs, allow, skips):
         scanned += 1
         try:
             with open(full, encoding="utf-8", errors="replace") as f:
                 lines = f.read().splitlines()
-        except OSError:
+        except OSError as e:
+            skips.append(rel + "（读取失败：" + type(e).__name__ + "）")
             continue
         for i, line in enumerate(lines, 1):
-            if len(line) > 500:
-                line = line[:500]
+            # 不再把行截断到 500 字符：压缩过的 JS 里，密钥与 eval 往往就在行尾。
             for cid, table in TABLES:
                 for pat, note in table:
                     for mo in re.finditer(pat, line):
@@ -134,7 +156,7 @@ def scan(root, include_docs, allow):
                         seen.add(key)
                         findings[cid].append({"file": rel, "line": i, "note": note,
                                               "snippet": line.strip()[:140]})
-    return scanned, findings
+    return scanned, findings, skips
 
 
 def score(findings, scanned):
@@ -167,16 +189,23 @@ def main():
         print("用法错误: 不是目录:", root)
         return 2
     allow = [a for a in args.allow.split(",") if a.strip()]
-    scanned, findings = scan(root, args.include_docs, allow)
+    scanned, findings, skips = scan(root, args.include_docs, allow)
     s, total, verdict, code = score(findings, scanned)
     if args.json:
         print(json.dumps({"repo": root.replace("\\", "/"), "scanned_files": scanned,
+                          "skipped_files": len(skips), "skips": skips,
                           "allow": allow, "counts": {c: len(findings[c]) for c in CHECKS},
                           "findings": findings, "score": s, "total": total,
                           "verdict": verdict}, ensure_ascii=False, indent=1))
         return code
     print("仓库: %s | 扫描 %d 个文件 | 豁免 %s" % (root.replace("\\", "/"), scanned,
                                                   ",".join(allow) or "无"))
+    if skips:
+        from collections import Counter
+        kinds = Counter(x.rsplit("（", 1)[-1].rstrip("）") for x in skips)
+        print("未扫描 %d 项：%s" % (len(skips),
+              "；".join("%s %d" % (k, v) for k, v in kinds.most_common())))
+        print("   完整清单用 --json 查看（skips 字段）——这些位置本次没有证据，别当成已通过。")
     for c in CHECKS:
         n = len(findings[c])
         print("== %s：%d 处（%d 分）" % (c, n, s[c]))

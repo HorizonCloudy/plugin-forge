@@ -8,6 +8,7 @@ description: |
   lifecycle / SDK capability limits, wants an ecosystem or market gap analysis for a
   plugin platform, or says 插件制造专家团 / plugin-forge / 写个插件 / 做个扩展.
   契约先行（方案未过审议不许写码）+ TDD + 极简工程 + 安全门禁 + 运行时验证。
+  交付前 D1–D12 自检闸门（反缓干、反伪阻断，见 references/delivery-self-check.md）。
   文档工程师内置双风格门禁（ASD-STE100 + humanizer，中英同等），外部内容入库先审计。
   兼管宿主破坏性变更影响审计（RFC/changelog/升级：插件机队体检与上游回帖礼仪）。
   平台知识按 profile 渐进加载（首例 profile：N.E.K.O）。
@@ -31,6 +32,7 @@ metadata:
 | 目标平台 | profile |
 |---|---|
 | N.E.K.O（猫娘桌宠） | `references/profile-neko.md` |
+| Coopanion / Cortico（package.json 的 cortico 块、world/provider/bot、TypeScript） | 归另一个专家团 coopanion-forge，本团不适用，勿混引契约 |
 | 其他平台（VSCode / Chrome / Obsidian / WordPress / 小程序 / MCP / Bot…） | 无 profile 时先做**平台契约调研**：官方文档 + 源码核对能力面，能力面结论只许 `[FACT]` 或 `[未核验]`；调研结果按 `references/profile-template.md` 落成新 profile 复用 |
 
 - 有 profile → **先跑 profile 文首的 ⓪ 陈旧门禁**（一条命令判定是否过期），再以其 manifest / 入口 / 能力面 / 沙箱契约为准。
@@ -59,7 +61,7 @@ metadata:
 
 ## 2. 三条铁律（范式核心机制）
 
-1. **契约前置**：Workflow A 的契约审议不可跳步。没有契约审议师准奏，不许动手写码。准奏须落盘项目根 `contract-approval.json`（格式 `references/contract-approval.schema.json`，示例见 `.example.json`）；写码前跑 `python scripts/check_contract_approval.py --approval <项目根>/contract-approval.json <要写的文件…>`，脚本 REFUSE 即不许动笔。
+1. **契约前置**：Workflow A 的契约审议不可跳步。没有契约审议师准奏，不许动手写码。准奏须落盘项目根 `contract-approval.json`（格式 `references/contract-approval.schema.json`，示例见 `.example.json`）；写码前跑 `python ${FORGE_HOME}/scripts/check_contract_approval.py --approval <项目根>/contract-approval.json <要写的文件…>`，脚本 REFUSE 即不许动笔。
 2. **封驳必须给改法**：只否定不给路径算失职；连续 2 次封驳升级用户裁决。
 3. **分拣**：纯问答（"X 是什么""怎么装"）主理人直接答，不开团队流程。
 
@@ -94,6 +96,8 @@ metadata:
 | 契约准奏记录格式（门禁产物） | `references/contract-approval.schema.json`（含示例） |
 | 安全检查清单与评分 | `references/security-checklist.md`（脚本 `scripts/security_audit.py`） |
 | 按任务规模定成员 | `references/task-size-routing.md` |
+| 交付前自检闸门（反缓干 / 反伪阻断 D1–D12） | `references/delivery-self-check.md` |
+| 用户级偏好（gh 沙箱 / PR 工作流 / commit 边界 / 命名 / 端口） | `references/user-prefs.md`——**本机安装副本才有，不随本仓库分发**；缺失时按宿主全局 AGENTS.md 的同类条款执行 |
 | 各成员详细人设 | 已装 agents 目录下的 `plugin-forge-*.md` |
 
 ## 5. 运行形态（按宿主自动适配）
@@ -105,3 +109,10 @@ metadata:
 - 无论哪种形态：宪法、契约门禁、证据分级、验收清单**完全一致**。
 - 路径约定：成员人设文档里的 `${FORGE_HOME}` = 本 skill 的安装目录（zcode `~/.zcode/skills/plugin-forge`；Claude Code 为插件缓存内的 plugin-forge 目录；Codex `~/.codex/skills/plugin-forge`）。它是文档占位符，执行命令前先换成实际目录（或 `export FORGE_HOME=…`）；文档内不再写死宿主路径。
 - 版本号只认 `.claude-plugin/plugin.json` 的 `version`（插件发布号）。本文件与 `agents/*.md` 不带版本号，避免两处漂移。
+
+## 6. 交付前终检（D1–D12 闸门）
+
+任何最终交付（回复用户、PR 文本、发布、验收汇报）发送前，读取并执行 `references/delivery-self-check.md`，对整条内容逐项贴「闸门快照」（每项写实核对内容，不许只写未命中）。
+适配：Codex 无 Skill 工具，读取该文件即视为 D5/D12 要求的「真加载」，加载必须发生在发送前最后一步，不许当回合开头盖章。
+命中即返工：执行被藏的最优步后重跑全闸，全空才交付。主理人在工作流 A/F/G/H 的验收步末尾执行此闸。
+交付涉及 Git、PR、测试服务或对外文本时，同时遵守用户级偏好（本机 `references/user-prefs.md`，或宿主全局 AGENTS.md）。

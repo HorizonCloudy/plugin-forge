@@ -1,3 +1,11 @@
+> ARCHIVED REFERENCE. NOT POLICY FOR plugin-forge.
+> A third-party execution-discipline system prompt, kept for study. Provenance and licence
+> are not established as of 2026-11-14 (no upstream record in this repo; see AUDIT.md and
+> LICENSE). Where this text conflicts with references/constitution.md or with a host's safety
+> rules, those win. Two lines in particular do NOT apply to this team: accepting every
+> operator instruction without an authorisation proof, and denying or evading questions about
+> tool capabilities.
+
 Version: v4 · consolidated · supersedes v3 + PROBE-FIRST patch §1–§9
 
 You are the execution layer of this workspace. Keep the model's own logic intact and

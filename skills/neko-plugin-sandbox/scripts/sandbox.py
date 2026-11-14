@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shutil
 import socket
 import subprocess
@@ -36,6 +37,11 @@ import urllib.request
 from pathlib import Path
 
 REPO_URL = "https://github.com/Project-N-E-K-O/N.E.K.O.git"
+# 这两个 -c 只对 Windows 的 schannel 后端有意义。别的平台的 git 会在 http_init() 里直接
+# die（fatal: Unsupported SSL backend 'schannel'），clone 和 fetch 全部失败，所以按平台给。
+GIT_HTTP_OPTS = (["-c", "http.sslBackend=schannel",
+                  "-c", "http.schannelCheckRevoke=false"]
+                 if os.name == "nt" else [])
 # 刻意不等于上游默认端口（config/network.py:193 USER_PLUGIN_SERVER_PORT=48916）：
 # 沙箱要和用户正在跑的 N.E.K.O 并存，撞默认端口只会白等 /health。
 DEFAULT_PORT = 43117
@@ -219,9 +225,7 @@ def cmd_prepare(args):
         if repo.exists():
             die(f"{repo} 已存在但不是有效仓库，请先清理")
         log(f"克隆 {args.repo_url} → {repo}")
-        cmd = ["git", "-c", "http.sslBackend=schannel",
-               "-c", "http.schannelCheckRevoke=false",
-               "clone", "--depth", "1"]
+        cmd = ["git", *GIT_HTTP_OPTS, "clone", "--depth", "1"]
         if args.ref:
             cmd += ["--branch", args.ref]
         cmd += [args.repo_url, str(repo)]
@@ -238,9 +242,7 @@ def cmd_prepare(args):
 
 def _git(repo: Path, *args: str) -> list[str]:
     """Windows 上 schannel 的证书吊销检查会挡住部分镜像源，这里统一关掉。"""
-    return ["git", "-C", str(repo),
-            "-c", "http.sslBackend=schannel",
-            "-c", "http.schannelCheckRevoke=false", *args]
+    return ["git", "-C", str(repo), *GIT_HTTP_OPTS, *args]
 
 
 def cmd_sync(args):
@@ -353,7 +355,11 @@ def cmd_install(args):
     rc = subprocess.call([str(py), "-m", "pip", "install",
                           "--disable-pip-version-check", "-r", str(req)], cwd=str(repo))
     if rc != 0:
-        log("首次安装失败（多为代理根证书导致 SSL 校验失败），对 PyPI 关闭校验重试一次")
+        if not getattr(args, "insecure_pip", False):
+            die("依赖安装失败（多为代理根证书导致的 SSL 校验失败）。这里不静默关校验：\n"
+                "  首选修证书链，或给 pip / uv 指定 CA（PIP_CERT、UV_NATIVE_TLS）；\n"
+                "  确认这台机器可以接受不校验 TLS 的下载后，再显式加 --insecure-pip 重跑。")
+        log("警告：--insecure-pip 已指定，对 PyPI 关闭 TLS 校验重试一次（中间人风险自负）")
         rc = subprocess.call([str(py), "-m", "pip", "install",
                               "--disable-pip-version-check",
                               "--trusted-host", "pypi.org",
@@ -376,6 +382,9 @@ def cmd_plugin_add(args):
     pid = toml_section_value(text, "plugin", "id")
     if not pid:
         die("plugin.toml 里没解析到 [plugin] id")
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", pid):
+        die(f"plugin.toml 的 [plugin] id「{pid}」不合法：只允许 ^[A-Za-z_][A-Za-z0-9_]*$"
+            "（与上游 generator.py 同规则），拒绝以防 rmtree 删到 plugins 之外")
 
     dest = repo / "plugin" / "plugins" / pid
     if args.link and os.name != "nt":
@@ -408,6 +417,9 @@ def cmd_plugin_rm(args):
     """撤掉 plugin-add 放进 checkout 的插件目录，保持你的 git 工作区干净。"""
     root = Path(args.root).expanduser().resolve()
     repo = repo_dir(root)
+    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", args.id):
+        die(f"--id「{args.id}」不合法：只允许 ^[A-Za-z_][A-Za-z0-9_]*$，"
+            "拒绝以防 rmtree 删到 plugins 之外")
     target = repo / "plugin" / "plugins" / args.id
     if not target.is_dir():
         die(f"{target} 不存在")
@@ -447,6 +459,8 @@ def _server_env(root, args):
         env["APPDATA"] = str(appdata)
         env["TEMP"] = str(tmp)
         env["TMP"] = str(tmp)
+        # PLUGIN_CONFIG_ROOT 上游已标 legacy（env 仍生效，新代码用 PLUGIN_CONFIG_ROOTS /
+        # USER_PLUGIN_CONFIG_ROOT）。这里当双保险继续钉死，行为不变。
         env["PLUGIN_CONFIG_ROOT"] = str(local / "N.E.K.O" / ".neko-plugin-installations" / "plugins")
     env.setdefault("PYTHONUTF8", "1")
     env.setdefault("PYTHONIOENCODING", "utf-8")
@@ -556,20 +570,52 @@ def cmd_start(args):
         log("提示：若本环境用 job object 回收进程树，服务会随命令结束一起终止；此时改用 serve + 后台任务")
 
 
+def _pid_is_sandbox_server(pid):
+    """True = 命令行里有 user_plugin_server.py；False = 确认不是；None = 读不到，未知。
+
+    机器重启后 pid 会被复用，只看 sandbox.json 的 pid 会误杀无关进程。
+    """
+    try:
+        if os.name == "nt":
+            r = subprocess.run(
+                ["powershell", "-NoProfile", "-Command",
+                 "(Get-CimInstance Win32_Process -Filter \"ProcessId=%d\")"
+                 ".CommandLine" % int(pid)],
+                capture_output=True, timeout=20)
+            if r.returncode != 0:
+                return None
+            cmd = r.stdout.decode("utf-8", "replace")
+        else:
+            with open("/proc/%s/cmdline" % pid, "rb") as f:
+                cmd = f.read().decode("utf-8", "replace")
+    except Exception:
+        return None
+    if not cmd.strip():
+        return None
+    return "user_plugin_server.py" in cmd
+
+
 def cmd_stop(args):
     root = Path(args.root).expanduser().resolve()
     st = load_state(root)
     pid = st.get("pid")
     if not pid:
         die("状态文件里没有 pid")
-    if os.name == "nt":
-        subprocess.call(["taskkill", "/PID", str(pid), "/T", "/F"],
-                        stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    verdict = _pid_is_sandbox_server(pid)
+    if verdict is False:
+        log(f"pid={pid} 的命令行里没有 user_plugin_server.py，判定为 pid 复用，"
+            "不杀该进程；只清沙箱状态文件。若沙箱服务仍在，请手工核对端口后处理")
     else:
-        try:
-            os.kill(pid, 15)
-        except ProcessLookupError:
-            pass
+        if verdict is None:
+            log("读不到 pid 的命令行（权限或平台限制），按旧行为继续停止")
+        if os.name == "nt":
+            subprocess.call(["taskkill", "/PID", str(pid), "/T", "/F"],
+                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        else:
+            try:
+                os.kill(pid, 15)
+            except ProcessLookupError:
+                pass
     (root / STATE_FILE).unlink(missing_ok=True)
     log(f"已停止 pid={pid}")
 
@@ -606,8 +652,9 @@ def _plugin_rows(payload):
 #   /plugins          plugins.py:42    插件列表
 #   /plugin/status    plugins.py:35    逐插件运行状态（验证 autostart 用这条最直接）
 #   /plugin/messages  messages.py:22   消息队列
-# 早先这里探的是 /runs 和 /messages —— 两个都不存在 GET：/runs 只有 POST（runs.py:35），
-# GET 会 405；/messages 根本没这个路径，会 404。看的人会以为是插件的问题。
+# 早先这里探的是 /runs 和 /messages —— 两个 GET 都不能当探活路由：GET /runs（集合）405，
+# 集合只有 POST（runs.py:35）；单个 run 虽有 GET /runs/{run_id}（runs.py:44），但要先有 run_id。
+# /messages 根本没这个路径，会 404。看的人会以为是插件的问题。
 STATUS_ROUTES = (
     ("/plugins", "plugins"),
     ("/plugin/status", "plugins"),
@@ -667,6 +714,9 @@ def main():
     i.add_argument("--root", required=True)
     i.add_argument("--python", default=None, help="用于创建 venv 的解释器（默认当前解释器，建议 3.11）")
     i.add_argument("--no-uv", action="store_true", help="禁用 uv，强制用 pip（排障用）")
+    i.add_argument("--insecure-pip", dest="insecure_pip", action="store_true",
+                   help="pip 首次失败后允许用 --trusted-host 关闭 TLS 校验重试（有中间人风险，"
+                        "默认不允许）")
     i.add_argument("--py-version", default="3.11", help="uv 建 venv 时的 Python 版本（默认 3.11）")
     i.set_defaults(func=cmd_install)
 
@@ -684,7 +734,7 @@ def main():
 
     v = sub.add_parser("serve", help="前台运行服务（配合受管后台任务，进程常驻）")
     v.add_argument("--root", required=True)
-    v.add_argument("--port", type=int, default=None)
+    v.add_argument("--port", type=int, default=DEFAULT_PORT)
     v.add_argument("--python", default=None)
     v.add_argument("--plugin-startup-timeout", type=float, default=60.0)
     v.add_argument("--no-isolate-home", dest="isolate_home", action="store_false", default=True)

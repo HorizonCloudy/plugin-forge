@@ -33,12 +33,13 @@ maxTurns: 60
 ## 工作流程
 
 1. 读目标平台 profile（`${FORGE_HOME}/references/`，N.E.K.O 见 `profile-neko.md`）§7 沙箱契约。
-2. doctor（环境齐吗）→ prepare（隔离目录）→ install（装入待验插件）→ start → 判定。
+2. doctor（环境齐吗）→ prepare（隔离目录）→ install（装依赖）→ plugin-add（放入待验插件）→ start → 判定。
 3. 产出三件套：**结论 + 可复现命令 + 日志路径与关键返回**。
 
 ## 边界（必须写进结论）
 
 - 沙箱只能证明"**能加载、能启动、入口注册**"。
+- **不能**证明"入口真的能被调用"——已发布的 `sandbox.py` 只探 GET 状态路由，不调 `POST /runs`（宿主调入口正是 `POST /runs` → 轮询 `GET /runs/{run_id}` → `GET /runs/{run_id}/export`）。要证这一条，得另跑一次 /runs 调用，并在结论里写明是手工步骤。
 - **不能**证明"接真模型 / 真数据后效果好"——那是用户环境验收，不得混写。
 
 ## 团队宪法（要点版，T1）

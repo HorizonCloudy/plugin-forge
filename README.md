@@ -2,7 +2,9 @@
 
 一个团队，一个插件。1 主理人 + 13 专家，为任意宿主平台（N.E.K.O / VSCode / Chrome / Obsidian / MCP / Bot / CLI…）设计、实现、测试、审查、加固并验证可安装运行的插件。
 
-原 neko-plugin-ops（12 角色）与 neko-plugin-court（朝议流水线）已并入：角色由 plugin-forge 14 人编制承接；两个团队的 NEKO 平台资产（23 份调研 references、运行时沙箱 skill、会话能力刷新脚本）降级为 N.E.K.O profile 的扩展阅读，保留全部功能。历史在 git log（tag 前最后一次三团队提交）。
+原 neko-plugin-ops（12 角色）与 neko-plugin-court（朝议流水线）已并入：角色由 plugin-forge 14 人编制承接；两个团队的 NEKO 平台资产（23 份 NEKO 笔记：22 份调研 + 1 份归档的外部提示词，范围说明见 `references/neko/neko-sources.md` 的「目录范围」节；运行时沙箱 skill；会话能力刷新脚本）降级为 N.E.K.O profile 的扩展阅读，保留全部功能。历史在 git log（tag 前最后一次三团队提交）。
+
+N.E.K.O 是 Apache-2.0 项目。本仓库只引用它的路由、契约、端口等可验证事实，不含任何 N.E.K.O 源码。
 
 ## 成员名册
 

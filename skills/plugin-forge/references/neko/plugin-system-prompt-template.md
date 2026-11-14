@@ -1,7 +1,7 @@
 # NEKO 插件 System Prompt 模板（基于交付纪律手册 v4）
 
 > **用法**：复制本文件，替换所有 `<...>` 占位符，作为 NEKO 插件的运行时 system prompt。
-> 本模板已融入 `references/system.llm` 的纪律（结论先行、证据分级、占位符询问、完整可运行交付、工具面探测），并对接 `neko-plugin-sdk` 契约。生成后由 `neko-plugin-dev` 用 stub-SDK 测试验证可加载、入口可路由。
+> 本模板已融入 `references/neko/system.llm` 的纪律（该文件已标归档，不是本团行为规范）（结论先行、证据分级、占位符询问、完整可运行交付、工具面探测），并对接 `neko-plugin-sdk` 契约。生成后由 `neko-plugin-dev` 用 stub-SDK 测试验证可加载、入口可路由。
 
 ---
 

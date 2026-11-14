@@ -39,11 +39,11 @@ def _safe(s, n=64):
     """S6: 所有动态值消毒为 [A-Za-z0-9._-] 并截断，避免注入不可见上下文。"""
     return re.sub(r"[^A-Za-z0-9._-]", "_", str(s))[:n]
 
-ROOT = r"~/.workbuddy"
-CODEBUDDY = r"~/.codebuddy"
+ROOT = os.path.expanduser("~/.workbuddy")
+CODEBUDDY = os.path.expanduser("~/.codebuddy")
 MKTS = ROOT + "/plugins/marketplaces"
 NEKO = MKTS + "/my-experts/plugins/neko-plugin-ops"
-HINDSIGHT = r"~/.hindsight/coding-agents/dist"
+HINDSIGHT = os.path.expanduser("~/.hindsight/coding-agents/dist")
 
 BASELINE = {
     "scalars": {
@@ -136,13 +136,13 @@ def collect_fingerprints():
             _step(key)
             if not os.path.isfile(path):
                 cur["scalars"][key] = "<MISSING>"
-                notes.append("路径缺失: " + _safe(path.replace("~/", "~/")))
+                notes.append("路径缺失: " + _safe(path.replace(os.path.expanduser("~/"), "~/")))
                 continue
             try:
                 cur["scalars"][key] = _fp(fn(_read(path)))
             except Exception as e:
                 cur["scalars"][key] = "<UNREADABLE>"
-                notes.append("解析失败 %s: %s" % (_safe(path.replace("~/", "~/")), _safe(type(e).__name__)))
+                notes.append("解析失败 %s: %s" % (_safe(path.replace(os.path.expanduser("~/"), "~/")), _safe(type(e).__name__)))
         _step("mcp.catalog.count")
         try:
             cur["scalars"]["mcp.catalog.count"] = len(
@@ -206,7 +206,7 @@ def build_context(cur, truncated, notes):
         diffs.append("  - skills 清单指纹变化（增删技能；清单由 Task A 维护）")
     missing = [p for p in HOOK_SCRIPTS if not os.path.isfile(p)]
     for p in missing:
-        diffs.append("  - Hook 脚本缺失: " + _safe(p.replace("~/", "~/")))
+        diffs.append("  - Hook 脚本缺失: " + _safe(p.replace(os.path.expanduser("~/"), "~/")))
 
     try:
         ms = _read(ROOT + "/mcp.json").get("mcpServers", {})

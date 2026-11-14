@@ -17,7 +17,7 @@
 
 **不可跳步**：没有 contract 准奏，不许写码。
 
-写码前先过机器门禁：`python scripts/check_contract_approval.py --approval contract-approval.json <要写的文件…>`；脚本 REFUSE 即不许动笔（含 scope 外文件）。派工规模先按 `references/task-size-routing.md` 分拣：小改动只到 dev + tdd，契约与安全门禁不豁免。
+写码前先过机器门禁：`python ${FORGE_HOME}/scripts/check_contract_approval.py --approval contract-approval.json <要写的文件…>`；脚本 REFUSE 即不许动笔（含 scope 外文件）。**这是流程辅助，不是强制**：脚本只校验记录，验不了签发人身份，也不会自动触发，靠各角色自觉调用；宿主级强制需另配 PreToolUse hook。派工规模先按 `references/task-size-routing.md` 分拣：小改动只到 dev + tdd，契约与安全门禁不豁免。
 
 ## Workflow B：修一个跑不起来的插件（单成员直调）
 
@@ -104,6 +104,8 @@ contract 封驳 → planner/architect **只改被驳部分** → 重新送审 �
 
 - [ ] manifest 语法正确，入口声明与代码一致
 - [ ] 入口类型符合 profile 约定（运行时入口 / 工具入口不混用）
+- [ ] 入口的 description / input_schema 脱离对话历史也能让调用方填对参数（平台把入口当工具调时是硬要求，见 profile 入口规则）
+- [ ] 入口对中途取消与重复调用安全：处理 `asyncio.CancelledError`、不留半态、可重入
 - [ ] 纯业务逻辑与宿主 SDK 分层，可离线单测
 - [ ] 定时 / 周期回调有异常捕获
 - [ ] 网络有超时与失败降级

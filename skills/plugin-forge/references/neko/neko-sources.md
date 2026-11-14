@@ -40,3 +40,18 @@
 - 研究任务由 **云雨（neko-plugin-dev）** / **云远（neko-architect）** 主导，先读本文档定的官方源，再结合本地 SDK skill。
 - 引用上游结论时标注来源链接；外部资源不可用就跳过并说明，不伪造。
 - 本文件随专家包分发，路径 `references/neko-sources.md`。
+
+## 6. 目录范围（`references/neko/` 23 份笔记怎么读）
+
+本目录是 N.E.K.O profile 的**扩展阅读**，不是规则来源。规则只在上一级的 `profile-neko.md`（平台事实）与 `constitution.md` / `SKILL.md`（团队制度）。
+
+| 类型 | 文件 | 读法 |
+|---|---|---|
+| 上游审计与调研（公开事实，带 commit / 日期） | `neko-court-*`（6）、`neko-ecosystem-*`（2）、`neko-market-patterns`、`rea-tool-surface`、`third-party-skill-audit`、`dev-agent-ecosystem`、`doc-writing-playbook`、`doc-writing-skill-audit`、`mattpocock-skills`、`plugin-system-prompt-template`、本文件 | 可引用，引用时把日期一起带上；上游一变就要重核 |
+| **作者单机状态**（只描述写它那台机器） | `capability-baseline`、`session-refresh-sop`、`security-refresh-notes`、`skill-inventory`、`safe-dev-capabilities` | **不得当跨机器结论**：里面的 MCP 名、hook 指纹、克隆目录、已装清单都是单机快照，换机器不成立 |
+| 归档的外部提示词 | `system.llm` | 不是本团行为规范，见该文件头 ARCHIVED 声明 |
+
+对外发布的三条硬约束：
+1. 不写明文密钥，也不写 key 前缀；失效 key 只记「已失效」。
+2. 不写真实用户名与本机绝对路径；需要位置时写 `~` 或 `<user>`。
+3. 脱敏只在输出侧做，读取仍用真值（`os.path.expanduser`）。把字面 `~` 留在代码里会让`scripts/session_capability_refresh.py` 恒报「路径缺失」，已踩过一次。

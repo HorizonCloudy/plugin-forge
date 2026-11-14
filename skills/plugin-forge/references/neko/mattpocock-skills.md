@@ -14,7 +14,7 @@
 | 形态 | 纯提示词 skill 集合（`SKILL.md` + `openai.yaml` 元数据），非运行时工具 / MCP |
 | 许可 | MIT |
 | 审计 commit | `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`（2026-10-31，`software-factory: glossary skill for designing a factory (#1316)`） |
-| 本地克隆 | `C:\Users\<user>\WorkBuddy\2026-11-02-21-48-31\mattpocock-skills`（`--depth 1`，184 文件；**排除 `.git` 口径**，含 `.git` 为 213 文件，2026-11-06 本机复核） |
+| 本地克隆 | 工作区内 `mattpocock-skills`（`--depth 1`，184 文件；**排除 `.git` 口径**，含 `.git` 为 213 文件，2026-11-06 本机复核） |
 | 规模 | **39 个 skill**（含 `SKILL.md`），5 个 bucket（**2026-10-31 上游快照 / 2026-11-06 本机复核**；数字准确不改，本机实装 38/39，见 `references/skill-inventory.md`） |
 
 ## 2. 两个分类维度
@@ -118,7 +118,7 @@ codex plugin marketplace add mattpocock/skills && codex plugin add mattpocock-sk
 安装时在选择界面**包含 `setup-matt-pocock-skills`**；装完后每个 repo 跑一次 `/setup-matt-pocock-skills` 配置 issue tracker 与文档位置。更新用 `npx skills@latest update`。
 
 **约定**：
-1. 这些 skill 是 **T2 补充**，与团队宪法（T1，见主理人文档 / `references/system.llm`）冲突时以宪法优先。
+1. 这些 skill 是 **T2 补充**，与团队宪法（T1，见主理人文档 / `references/neko/system.llm`，该文件已标归档）冲突时以宪法优先。
 2. 安装方式二选一（plugin 自动更新 / skills.sh 手动更新），**不要同时装**，否则每个 skill 出现两份。
 3. `user-invoked` 与 `model-invoked` 的调用边界按 README Reference 执行，不混用。
 4. 本专家包**不内置**这些 skill 文件，仅登记权威上游；上游更新无需同步包内副本。

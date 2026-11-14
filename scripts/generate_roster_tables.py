@@ -75,7 +75,10 @@ def read(path):
         return f.read().replace("\r\n", "\n")
 
 def write(path, text):
-    with open(path, "w", encoding="utf-8", newline="\r\n") as f:
+    # 行尾跟随目标文件现状：Linux / macOS 上跑 --write 不再把整份文档改成 CRLF。
+    with open(path, "rb") as f:
+        eol = "\r\n" if b"\r\n" in f.read() else "\n"
+    with open(path, "w", encoding="utf-8", newline=eol) as f:
         f.write(text)
 
 def render_table(members, subset, columns):

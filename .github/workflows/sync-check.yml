@@ -19,6 +19,8 @@ jobs:
           python -m py_compile scripts/generate_roster_tables.py
           python -m py_compile skills/plugin-forge/scripts/check_contract_approval.py
           python -m py_compile skills/plugin-forge/scripts/security_audit.py
+          python -m py_compile skills/neko-plugin-sandbox/scripts/sandbox.py
+          python -m py_compile scripts/session_capability_refresh.py
       - name: Roster generator self-test
         run: python scripts/generate_roster_tables.py --self-test
       - name: Roster tables and head-counts in sync

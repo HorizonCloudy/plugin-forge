@@ -1,7 +1,7 @@
 {
   "name": "plugin-forge",
-  "version": "2.1.0",
-  "description": "插件制造专家团（唯一编制，1 主理人 + 13 专家）：契约先行 + TDD + 安全门禁 + 宿主变更影响审计 + 双风格文档门禁；N.E.K.O 平台资产（沙箱 skill、能力刷新、23 份调研）作为 profile 扩展阅读内置。",
+  "version": "2.2.0",
+  "description": "插件制造专家团（唯一编制，1 主理人 + 13 专家）：契约先行 + TDD + 安全门禁 + 宿主变更影响审计 + 双风格文档门禁；N.E.K.O 平台资产（沙箱 skill、能力刷新、23 份 NEKO 笔记）作为 profile 扩展阅读内置。",
   "author": {
     "name": "云朵",
     "email": "HorizonCloudy@users.noreply.github.com"

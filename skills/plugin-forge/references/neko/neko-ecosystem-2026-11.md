@@ -5,7 +5,7 @@
 
 ## 1. 一句话结论
 
-N.E.K.O 插件侧在 2026-10~11 **没有破坏性变更**，官方**明确不承诺 SDK 路线图**（只能从 issue/PR/release 反推）；同类产品的隔离范式（OpenPets 的权限桥、bext 的渐进分层）比我们现在的沙箱更值得抄；工程侧「健康检查 + uv 隔离」是成本最低的加固基线。
+N.E.K.O 插件侧在 2026-10~11 **没有破坏性变更**（此判断只到调研时点 2026-11-06/07；其后 11-11 公告的 NekoClaw 重写 issue #3683 承诺守住 /runs、push_message、@llm_tool 等插件契约，但改了调用方行为：取消真正打到插件、同一入口可能被重复调用、`_ctx.lanlan_name` 由宿主值覆盖，详见 profile-neko.md 的 2026-11-11 条目），官方**明确不承诺 SDK 路线图**（只能从 issue/PR/release 反推）；同类产品的隔离范式（OpenPets 的权限桥、bext 的渐进分层）比我们现在的沙箱更值得抄；工程侧「健康检查 + uv 隔离」是成本最低的加固基线。
 
 ## 2. 官方动态（[FACT]，带来源）
 
@@ -72,7 +72,7 @@ N.E.K.O 插件侧在 2026-10~11 **没有破坏性变更**，官方**明确不承
 | 工具 | 状态 | 说明 |
 |---|---|---|
 | **Exa** | ✅ 可用 | skill `build-with-exa` v0.3.0（`~/.workbuddy/skills/build-with-exa/`），`EXA_API_KEY` 已配置；`POST https://api.exa.ai/search` 返回 200 |
-| **AnySearch** | ❌ 不可用 | MCP 已接 `https://api.anysearch.com/mcp`，但服务端返回 `invalid_api_key`。根因两层：① `mcp.json` 里 `Authorization: Bearer ${ANYSEARCH_API_KEY}` 指向的 key 已失效；② 环境变量 `ANYSEARCH_API_KEY`（`as_sk_a34a…`）本身失效，且按官方优先级 env > 匿名，所以删 header 后仍报错 |
+| **AnySearch** | ❌ 不可用 | MCP 已接 `https://api.anysearch.com/mcp`，但服务端返回 `invalid_api_key`。根因两层：① `mcp.json` 里 `Authorization: Bearer ${ANYSEARCH_API_KEY}` 指向的 key 已失效；② 环境变量 `ANYSEARCH_API_KEY`（失效 key，前缀不记录）本身失效，且按官方优先级 env > 匿名，所以删 header 后仍报错 |
 | 内置 WebSearch / WebFetch | ✅ 可用 | 兜底 |
 
 **AnySearch 修复路径（二选一）**：

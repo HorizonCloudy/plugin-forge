@@ -20,3 +20,12 @@ Third-party attribution:
 - references/style-anti-slop.md condenses rules from asd-ste100 kit (MIT, (c) woosal1337;
   the ASD-STE100 specification itself is copyright ASD / AEEC), humanizer (MIT, (c) blader),
   and Humanizer-zh (MIT, (c) op7418). See AUDIT.md.
+- references/neko/neko-court-*.md borrow the institutional model of cft0808/edict (MIT).
+  No source from it is copied here; see references/neko/neko-court-source-notes.md.
+- references/neko/mattpocock-skills.md and references/neko/doc-writing-playbook.md condense
+  ideas from mattpocock/skills, stop-slop and SimpleEnglish (MIT). They are summaries and
+  links, not copies.
+- references/neko/system.llm is an archived third-party system prompt kept for study. Its
+  provenance and licence are not established (see AUDIT.md). It is not policy for this team.
+- N.E.K.O is an Apache-2.0 project. This repository cites its routes, contracts and ports as
+  verifiable facts and contains none of its source.

@@ -40,7 +40,8 @@ maxTurns: 180
 | 沉淀/审计 skill | Workflow D：skill-ops 主导 |
 | 生态/市场缺口分析 | Workflow E：market-research → 分支路由 A 或留存需求清单 |
 | 交付前真实冒烟 | Workflow F：sandbox |
-| 文档/报告交付 | Workflow G：我自处理（结论先行 + 反 slop + 三段式） |
+| 文档/报告交付 | Workflow G：派 docs 执笔，我方定提纲与结论（结论先行 + 反 slop + 三段式） |
+| 宿主破坏性变更 / 机队体检 | Workflow H：影响审计 + 上游回帖礼仪（见 workflows.md） |
 | 快速问答 | 直接答，不开流程 |
 
 阶段表、验收清单、封驳回环、失败处理见 `${FORGE_HOME}/references/workflows.md`。

@@ -40,9 +40,9 @@ description: 基于 N.E.K.O 官方仓库搭建隔离的插件运行时沙箱：�
 | **autostart 的额外前置** | 除上面参数外，还要同时满足：清单 `[plugin_runtime] auto_start = true`（**省略即 false**）、`runtime_enabled` 非 `False`、`runtime_load_state != "failed"`、`runtime_source_missing != True`、且 id 不在 `plugin_autostart_pending.json` 待审批集合里 | `plugin/core/registry.py:1290-1296`；`plugin/server/application/plugins/registry_service.py:1254-1276` |
 | Windows 事件循环 | 强制 `WindowsSelectorEventLoopPolicy`（在起 event loop 之前） | `user_plugin_server.py:59-74` |
 | CLI 能力 | `init / setup-repo / create-repo / sync / check / lint / precheck / build / install / analyze / publish`（**没有 run / validate / release / deps**） | `plugin/neko_plugin_cli/cli.py:105-113` + 各 `*_cmd.register` |
-| **验证用路由** | `GET /plugins`（列表）、`GET /plugin/status`（逐插件状态，验 autostart 用这条）、`GET /plugin/messages`；`/runs` **只有 POST** | `routes/plugins.py:42`、`:35`；`routes/messages.py:22`；`routes/runs.py:35` |
+| **验证用路由** | `GET /plugins`（列表）、`GET /plugin/status`（逐插件状态，验 autostart 用这条）、`GET /plugin/messages`；`GET /runs`（集合）405，集合只有 POST；单个 run 有 `GET /runs/{run_id}`（需先有 run_id，不当探活用） | `routes/plugins.py:42`、`:35`；`routes/messages.py:22`；`routes/runs.py:35`、`:44` |
 | **用户数据根** | Windows 上取 **`LOCALAPPDATA`**（不是 `HOME`/`USERPROFILE`） | `utils/config_manager/storage_roots.py:_get_standard_data_directory_candidates`（L367-381） |
-| **用户插件执行根** | `PLUGIN_CONFIG_ROOT` 可显式覆盖；否则 `<数据根>/N.E.K.O/.neko-plugin-installations/plugins` | `plugin/settings.py:get_user_plugin_exec_root`（L102-118） |
+| **用户插件执行根** | `PLUGIN_CONFIG_ROOT` 可显式覆盖（上游已标 legacy，新代码用 `PLUGIN_CONFIG_ROOTS` / `USER_PLUGIN_CONFIG_ROOT`；env 仍生效）；否则 `<数据根>/N.E.K.O/.neko-plugin-installations/plugins` | `plugin/settings.py:get_user_plugin_exec_root`（L102-118） |
 | **插件启动超时** | `NEKO_PLUGIN_STARTUP_TIMEOUT`，默认 **10.0s**，且 **>300s 直接 raise ValueError** | `plugin/settings.py:314-315`、`:788-791` |
 
 **复核记录 2026-11-07（commit `645da54`）**：本表相对旧版改了 3 处 ——
