@@ -779,7 +779,7 @@ def _self_test():
     drop = ["MYSQL_PWD", "DB_PWD", "GITHUB_TOKEN", "ANTHROPIC_API_KEY",
             "AWS_SECRET_ACCESS_KEY", "OPENAI_APIKEY",
             "MY_SECRET", "SESSION_TOKEN_X", "DB_PASS", "PGPASSWORD", "ADMIN_PASSWORD",
-            "DATABASE_URL", "db_credential"]
+            "DATABASE_URL", "db_credential", "PLAIN_TEXT_XYZ"]
     vals = {"DATABASE_URL": "postgres://u:sup3rs3cr3tpw@db/x", "db_credential": "x"}
     bad = []
     for k in keep:
