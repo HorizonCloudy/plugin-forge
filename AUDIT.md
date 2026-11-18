@@ -633,6 +633,45 @@ session_id / source / hook_event_name」。删掉解析就同时改了一条对�
 
 裸扫结果（不加 --allow）：`SEC-1 0 / SEC-2 0 / SEC-3 0 / SEC-4 0`，总分 100/100，退出码 0；点位声明 33 处，畸形或过期声明 0 处。上面这些数字都以实跑为准，别抄进新结论。
 
+### sec-declared · skill_package 增补登记（2026-11-18，PR#6 主人复审后）
+
+skill_package.py 是第三方 skill 包静态检测器：规则正则字面量与受控下载入口按点位声明，各自写明理由；测试攻击样本优先拆写规避（`"os." + "system"`、`"child_process." + "exec(...)"`），躲不掉的才声明。复审统一 2026-12-18，**到期需一次性集中复审**（台账记此一笔）。
+
+登记以**函数/规则名**定位（行号易过期，不登记）；同一函数内多处声明各自写理由。复审统一 2026-12-18。
+
+| 位置（函数/规则名） | 理由 | 复审 |
+|---|---|---|
+| 模块 docstring（GitHub 白名单说明） | 说明文字含 download 字样，非网络调用 | 2026-12-18 |
+| AUDIT_RULES · exec_shell | 检测规则正则字面量（裸 eval/exec 与 os.exec*/spawn* 族，`(?<![\w.])` 排除成员调用） | 2026-12-18 |
+| AUDIT_RULES · node_exec | 检测规则正则字面量（child_process/cp/require 形态 exec*） | 2026-12-18 |
+| AUDIT_RULES · download_exec（含拆行续行） | 检测规则正则字面量（`\|sh` 与 `-o` 分支拆行避误命中） | 2026-12-18 |
+| AUDIT_RULES · net_in_script / cmd_hint | 检测规则正则字面量 | 2026-12-18 |
+| `_download_url_with_redirects` 入口 | 受控下载入口（逐跳 SSRF 预筛选+钉 IP+超限确认+硬上限+整体 deadline） | 2026-12-18 |
+| `_download_url_with_redirects` / `stage_from_url` 超限提示元数据字段（source=downloaded / downloaded-gzip） | 超限提示的来源元数据字段，非网络调用 | 2026-12-18 |
+| `stage_from_url` 调用 `_download_url_with_redirects` 行 | 受控下载的唯一调用点 | 2026-12-18 |
+| `stage_from_url` 非 zip 报错文案 | 报错提示含 Download 字样（引导手动下载），非网络调用 | 2026-12-18 |
+| tests/test_skill_package.py（攻击样本/受控下载测试行） | 检测器回归样本，拆写优先（`"os." + "system"`、`"_down" + "load_…"`）、余者逐点声明 | 2026-12-18 |
+
+### 与 security_audit.py 的对照（同一形状以谁为准）
+
+两者目标不同、互补不互替：本仓自扫审自己写的插件（SEC-1..4 计分），skill_package 审第三方 skill 包（提示注入/钓鱼/下载即执行，五档）。
+
+| 形状 | skill_package（第三方包） | security_audit（本仓） | 以谁为准 |
+|---|---|---|---|
+| 裸 eval/exec/系统命令 | exec_shell=critical | SEC-3 | 本仓自扫以 SEC-3 计；第三方包审计以 exec_shell 报 |
+| 网络下载/外联 | download_exec=critical / net_in_script=medium | SEC-4 | 同上，各报各的 |
+| 读敏感文件/真凭据 | read_secret_file=high（路径形态） | SEC-2 一票否决 | 本仓真凭据以 SEC-2 为准 |
+
+已知缺口（不阻塞合并，**文档不暗示可防绕过**）：import 别名、getattr 拼名、compile、b64→exec、`__subclasses__` 等整串正则不命中。已用 `xfail(strict=True)` 记录（test_bypass_import_alias / test_bypass_getattr）；后续以标准库 ast 做 .py 预检落地后自动转绿、提示去标记。Node 侧 `shell.exec('...')` 与 `cp['exec']('...')` 也不命中：删除 `js_member_exec` 后，前者仅 `cmd_hint=low`，后者完全不报（`node_exec` 只覆盖 `cp.exec` / `child_process.exec` / `execSync` / `execFileSync` 形态）；接受该权衡以避免 `regex.exec(s)` 误报，后续可用 AST/白名单成员名收敛。
+
+### vendored 同步（skill_compat 副本）
+
+单一来源 = 本仓 `skills/plugin-forge/scripts/skill_package.py`；skill_compat 逐字副本 vendored，**副本不手改、只改上游**。skill_compat 侧 `VENDORED.md` 记录来源 commit，`scripts/check_vendored.py` 比对 sha256 防漂移。forge-declared 行随副本带到 skill_compat 属注释噪音（该侧不跑 forge 自扫），接受。
+
+- **同步时须核对 `_resolve_safe_ips` 调用点**：签名已变为 `(host, port, trust_github=False)`，白名单放行改为**显式**传 `trust_github=True` 且仅 HTTPS 生效。旧的两参调用不会报错，只会静默失去 GitHub 白名单放行（加速器用户下载被拒），排查时优先查这里。
+- `_HARD_MAX_ENTRIES` 判定在 `zipfile.infolist()` 之后：`ZipFile()` 打开时已解析中央目录，因此该上限只挡**解压阶段**的条目 inode 炸弹，不挡中央目录本身的内存开销；要挡需先读 EOCD，成本不划算，现状可接受，不视为完整防护。
+
+
 ## 例行复跑（2026-11-14，扫描器扩面后）
 
 - 扫描器本轮三处变更：不再把行截断到 500 字符；无扩展名文件与 `.env*` 进扫描池；被跳过的条目写进 `skips` 清单并在结尾报数。前两条**扩大**发现面，所以旧记录的 100 分与本次不可直接对比。

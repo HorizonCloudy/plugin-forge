@@ -36,6 +36,11 @@ def dry_load():
                  "skills/neko-plugin-sandbox/scripts/dry_load.py")
 
 
+@pytest.fixture(scope="session")
+def skill_package():
+    return _load("forge_skill_package", "skills/plugin-forge/scripts/skill_package.py")
+
+
 @pytest.fixture
 def repo_root():
     return ROOT
